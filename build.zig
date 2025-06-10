@@ -8,15 +8,42 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    // Build ImGui Static Library
+    // ------------------------------------------------------------
     const imgui = b.dependency("imgui", .{});
-    const rl_imgui = b.dependency("rlimgui", .{});
+    const libimgui = b.addLibrary(.{
+        .linkage = .static,
+        .name = "imgui",
+        .root_module = b.createModule(.{
+            .target = target,
+            .optimize = optimize,
+            .link_libc = true,
+            .link_libcpp = true,
+        }),
+    });
+    imgui.addCSourceFiles(.{
+        .root = imgui.path(""),
+        .language = .cpp,
+        .flags = &.{},
+        .files = &.{
+            "imgui.cpp",
+            "imgui_demo.cpp",
+            "imgui_draw.cpp",
+            "imgui_tables.cpp",
+            "imgui_widgets.cpp",
+        },
+    });
+    // ------------------------------------------------------------
+
 
     const raylib = b.dependency("raylib", .{.shared=true});
     const libraylib = raylib.artifact("raylib");
     b.installArtifact(libraylib);
 
+    const rl_imgui = b.dependency("rlimgui", .{});
+
     const lib = b.addLibrary(.{
-        .linkage = .static,
+        .linkage = .dynamic,
         .name = "physics",
         .root_module = b.createModule(.{
             .target = target,
@@ -44,6 +71,7 @@ pub fn build(b: *std.Build) void {
 
     // ** Linking
     lib.linkLibrary(libraylib);
+    lib.linkLibrary(libimgui);
 
     b.installArtifact(lib);
 
@@ -92,7 +120,7 @@ pub fn build(b: *std.Build) void {
     exe.addIncludePath(rl_imgui.path(""));
 
     // ** Linking
-    exe.linkLibrary(lib);
+    exe.linkLibrary(libimgui);
     exe.linkLibrary(libraylib);
 
     b.installArtifact(exe);
