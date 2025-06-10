@@ -21,7 +21,7 @@ pub fn build(b: *std.Build) void {
             .link_libcpp = true,
         }),
     });
-    imgui.addCSourceFiles(.{
+    libimgui.addCSourceFiles(.{
         .root = imgui.path(""),
         .language = .cpp,
         .flags = &.{},
@@ -33,8 +33,8 @@ pub fn build(b: *std.Build) void {
             "imgui_widgets.cpp",
         },
     });
+    libimgui.installHeadersDirectory(imgui.path(""), "", .{.include_extensions = &.{"hpp", "h"}});
     // ------------------------------------------------------------
-
 
     const raylib = b.dependency("raylib", .{.shared=true});
     const libraylib = raylib.artifact("raylib");
@@ -89,21 +89,20 @@ pub fn build(b: *std.Build) void {
         .language = .cpp,
         .flags = &.{},
         .files = &.{
-            "main.cpp"
+            "main.cpp",
+            "editor.cpp"
         },
     });
-    exe.addCSourceFiles(.{
-        .root = imgui.path(""),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "imgui.cpp",
-            "imgui_demo.cpp",
-            "imgui_draw.cpp",
-            "imgui_tables.cpp",
-            "imgui_widgets.cpp",
-        },
-    });
+    if (target.result.os.tag == .windows) {
+        exe.addCSourceFiles(.{
+            .root = b.path("src/runtime"),
+            .language = .cpp,
+            .flags = &.{},
+            .files = &.{
+                "win32_dynamic_api.cpp",
+            },
+        });
+    }
     exe.addCSourceFiles(.{
         .root = rl_imgui.path(""),
         .language = .cpp,
