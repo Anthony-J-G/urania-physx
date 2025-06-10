@@ -16,7 +16,7 @@ In a collocated grid, the velocity of the fluid is stored in the center of each 
 Classes
 -------
 
-.. doxygenclass:: Fluid  
+.. doxygenclass:: EulerFluid
    :project: physics
    :members:
 

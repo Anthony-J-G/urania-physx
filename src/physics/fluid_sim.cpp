@@ -29,9 +29,9 @@ static auto g_Camera = Camera2D{
 static Texture2D g_Texture;
 static Image     g_Image;
 
-// Fluid Simulation
+// Euler Fluid Simulation
 //----------------------------------------------------------------------------------
-Fluid::Fluid(float _density, int _x, int _y, int _h) {
+EulerFluid::EulerFluid(float _density, int _x, int _y, int _h) {
     density     = _density;
     num_x       = _x + 2;
     num_y       = _y + 2;
@@ -49,7 +49,7 @@ Fluid::Fluid(float _density, int _x, int _y, int _h) {
     for (int i = 0; i < cell_count; i++) { m[i] = 1.0; }
 }
 
-Fluid::~Fluid() {
+EulerFluid::~EulerFluid() {
     free(static_cast<void*>(u));
     free(static_cast<void*>(v));
     free(static_cast<void*>(new_u));
@@ -61,7 +61,7 @@ Fluid::~Fluid() {
 }
 
 
-void Fluid::Integrate(const float deltatime, const float gravity) {
+void EulerFluid::Integrate(const float deltatime, const float gravity) {
     int n = num_y;
     for (int i = 1; i < num_x; i++) {
         for (int j = 1; j < num_y; j++) {
@@ -73,7 +73,7 @@ void Fluid::Integrate(const float deltatime, const float gravity) {
 }
 
 
-void Fluid::SolveIncompressibility(const float deltatime, const float over_relax) {
+void EulerFluid::SolveIncompressibility(const float deltatime, const float over_relax) {
     int n = num_y;
     float cp = density * h / deltatime;
 
@@ -109,7 +109,7 @@ void Fluid::SolveIncompressibility(const float deltatime, const float over_relax
 }
 
 
-void Fluid::Extrapolate() {
+void EulerFluid::Extrapolate() {
     int n = num_y;
     for (size_t i = 0; i < num_x; i++) {
         u[i*n + 0] = u[i*n + 1];
@@ -122,7 +122,7 @@ void Fluid::Extrapolate() {
 }
 
 
-void Fluid::AdvectVelocity(const float deltatime) {
+void EulerFluid::AdvectVelocity(const float deltatime) {
     memcpy(new_u, u, sizeof(float) * cell_count);
     memcpy(new_v, v, sizeof(float) * cell_count);
 
@@ -133,38 +133,38 @@ void Fluid::AdvectVelocity(const float deltatime) {
         for (size_t j = 1; j < num_y; j++) {
 
             // u component
-            if (s[i*n + j] != 0.0 && s[(i-1)*n + j] != 0.0 && j < num_y - 1) {
-                int x = i*h;
-                int y = j*h + h2;
-                float u_current = u[i*n + j];
-                int v = AverageV(i, j);
-//				var v = this.sampleField(x,y, V_FIELD);
-                x = x - dt*u;
-                y = y - dt*v;
-                u = SampleField(x, y, FieldType__U);
-                this.newU[i*n + j] = u;
-            }
-            // v component
-            if (s[i*n + j] != 0.0 && s[i*n + j-1] != 0.0 && i < num_x - 1) {
-                var x = i*h + h2;
-                var y = j*h;
-                var u = this.avgU(i, j);
-//						var u = this.sampleField(x,y, U_FIELD);
-                var v = this.v[i*n + j];
-                x = x - dt*u;
-                y = y - dt*v;
-                v = this.sampleField(x,y, V_FIELD);
-                this.newV[i*n + j] = v;
-            }
+        //    if (s[i*n + j] != 0.0 && s[(i-1)*n + j] != 0.0 && j < num_y - 1) {
+        //        int x = i*h;
+        //        int y = j*h + h2;
+        //        float u_current = u[i*n + j];
+        //        int v = AverageV(i, j);
+//		//		var v = this.sampleField(x,y, V_FIELD);
+        //        x = x - dt*u;
+        //        y = y - dt*v;
+        //        u = SampleField(x, y, FieldType__U);
+        //        this.newU[i*n + j] = u;
+        //    }
+        //    // v component
+        //    if (s[i*n + j] != 0.0 && s[i*n + j-1] != 0.0 && i < num_x - 1) {
+        //        var x = i*h + h2;
+        //        var y = j*h;
+        //        var u = this.avgU(i, j);
+//		//				var u = this.sampleField(x,y, U_FIELD);
+        //        var v = this.v[i*n + j];
+        //        x = x - dt*u;
+        //        y = y - dt*v;
+        //        v = this.sampleField(x,y, V_FIELD);
+        //        this.newV[i*n + j] = v;
+        //    }
         }	 
     }
 
-    this.u.set(this.newU);
-    this.v.set(this.newV);
+    // this.u.set(this.newU);
+    // this.v.set(this.newV);
 }
 
 
-void Fluid::AdvectSmoke(const float deltatime) {
+void EulerFluid::AdvectSmoke(const float deltatime) {
 }
 
 
@@ -183,7 +183,9 @@ float AverageV(int i, int j) {
 }
 
 
-void Fluid::Simulate(const float deltatime, const float gravity, const uint8_t total_iterations, float over_relax) {
+void EulerFluid::Simulate(
+    const float deltatime, const float gravity, const uint8_t total_iterations, float over_relax
+) {
     Integrate(deltatime, gravity);
 
     for (int i = 0; i < cell_count; i++) { p[i] = 0.0; }
@@ -196,14 +198,14 @@ void Fluid::Simulate(const float deltatime, const float gravity, const uint8_t t
     AdvectSmoke(deltatime);
     
 }
-//---------------------------------------------------------------------------------- End Fluid Simulation
+//---------------------------------------------------------------------------------- End Euler Fluid Simulation
 
 
 
 // Fluid Simulation Scene
 //----------------------------------------------------------------------------------
 FluidSimulationScene::FluidSimulationScene() {
-    fluid = new Fluid(1, 1, 1, 1);
+    fluid = new EulerFluid(1, 1, 1, 1);
 }
 
 

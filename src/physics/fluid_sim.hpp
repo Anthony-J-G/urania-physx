@@ -11,17 +11,23 @@ enum FieldType : uint8_t {
     FieldType__S,
 };
 
-
-class Fluid {
+/*!
+Simulation of a fluid using an Eulerian grid-based approach.
+*/
+class EulerFluid {
 public:
-    //! Nutshell constructor
-    Fluid(float density, int x, int y, int h);
-    ~Fluid();
-    Fluid(const Fluid& other) = delete;
-    Fluid& operator=(const Fluid& other) = delete;
+    //! Fluid constructor
+    EulerFluid(float density, int x, int y, int h);
+    //! Explicit Fluid destructor to ensure proper freeing of particle buffers
+    ~EulerFluid();
+    //! Deleted copy construtor
+    EulerFluid(const EulerFluid& other) = delete;
+    //! Deleted copy assignment construtor
+    EulerFluid& operator=(const EulerFluid& other) = delete;
 
 
 public:
+    //! Compute a single step of the fluid simulation
     void Simulate(const float deltatime, const float gravity, const uint8_t total_iterations, const float over_relax);
 
     int GetXCellCount() { return num_x; }
@@ -74,7 +80,7 @@ public:
     void Render();
 
 private:
-    Fluid* fluid;
+    EulerFluid* fluid;
 
     float simulation_height = 1.1;
     float cell_scale        = 1.0;
