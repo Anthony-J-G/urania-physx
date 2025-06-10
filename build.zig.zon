@@ -44,6 +44,14 @@
             .url = "git+https://github.com/anthony-j-g/ccpputilz?ref=dev#cf1ae84b29a89b23cae2ed2a7c9a9a4832ea402c",
             .hash = "ccpputilz-0.1.0-AAAAAFF_AADf4ujCpr6UeSFWgwVXWGVPCHAPwYE8Q26Y",
         },
+        .rlimgui = .{
+            .url = "git+https://github.com/raylib-extras/rlImGui.git#9512b36b8cb563274138ec10d82568a51e40d812",
+            .hash = "N-V-__8AAA7QXgBHKeBNgVmXOAAx8hjTqKwDN1hKLuRmnUtu",
+        },
+        .imgui = .{
+            .url = "git+https://github.com/ocornut/imgui.git#201899b611c34d35e6e38778abab91d76b0451c0",
+            .hash = "N-V-__8AAPcRawDi7283ggTUVILrm_RNGlX4e6XXeiE8GpOE",
+        },
     },
     .paths = .{
         "build.zig",

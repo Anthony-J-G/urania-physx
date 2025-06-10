@@ -8,6 +8,9 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const imgui = b.dependency("imgui", .{});
+    const rl_imgui = b.dependency("rlimgui", .{});
+
     const raylib = b.dependency("raylib", .{.shared=true});
     const libraylib = raylib.artifact("raylib");
     b.installArtifact(libraylib);
@@ -31,7 +34,7 @@ pub fn build(b: *std.Build) void {
             "sample.cpp",
             "fluid_sim.cpp",
         },
-    });
+    });    
 
     // ** Includes
     lib.addIncludePath(b.path("src/physics"));
@@ -61,9 +64,32 @@ pub fn build(b: *std.Build) void {
             "main.cpp"
         },
     });
+    exe.addCSourceFiles(.{
+        .root = imgui.path(""),
+        .language = .cpp,
+        .flags = &.{},
+        .files = &.{
+            "imgui.cpp",
+            "imgui_demo.cpp",
+            "imgui_draw.cpp",
+            "imgui_tables.cpp",
+            "imgui_widgets.cpp",
+        },
+    });
+    exe.addCSourceFiles(.{
+        .root = rl_imgui.path(""),
+        .language = .cpp,
+        .flags = &.{},
+        .files = &.{
+            "rlImGui.cpp",
+        },
+    });
+
     // ** Includes
     exe.installLibraryHeaders(libraylib);
     exe.addIncludePath(b.path("zig-out/include"));
+    exe.addIncludePath(imgui.path(""));
+    exe.addIncludePath(rl_imgui.path(""));
 
     // ** Linking
     exe.linkLibrary(lib);
