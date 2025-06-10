@@ -14,6 +14,7 @@ enum FieldType : uint8_t {
 
 class Fluid {
 public:
+    //! Nutshell constructor
     Fluid(float density, int x, int y, int h);
     ~Fluid();
     Fluid(const Fluid& other) = delete;

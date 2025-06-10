@@ -16,7 +16,7 @@ author = 'Anthony J. G.'
 extensions = [ "breathe" ]
 
 # Breathe Configuration
-breathe_projects = { "physics": "../xml" }
+breathe_projects = { "physics": "../_doxygen/xml" }
 breathe_default_project = "physics"
 
 templates_path = ['_templates']
