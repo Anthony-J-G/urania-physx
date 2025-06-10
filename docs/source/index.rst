@@ -3,10 +3,11 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Project: Commander
-==================
+Physics Simulations in C++
+==========================
 
-The following serves to be a combination of design outline, specification, and documentation for ``Project: Commander``, a nautical strategy game set in a fantasy setting. Inspired by the novel Master and Commander by English author Patrick O'Brian and subsequent cinematic adaptation, the game puts the player in command of naval frigate.
+This repository contains multiple different implementations of various physics simulations. It currently uses `Raylib <https://github.com/raysan5/raylib>`_ as a backend to handle rendering,
+sound, input event handling, as well as some other platform speciifc functionality so the main focus of the repository is on the physics. For more information on the ``Raylib`` API, you can reference the `API cheatsheet <https://www.raylib.com/cheatsheet/cheatsheet.html>`_ or the `multitude of examples <https://www.raylib.com/examples.html>`_
 
 Add your content using ``reStructuredText`` syntax. See the
 `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
@@ -19,5 +20,6 @@ documentation for details.
 
    administration/index
    design/index
+   simulations/index
    specification/index
 

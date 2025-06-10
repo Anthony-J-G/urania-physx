@@ -1,3 +1,6 @@
 *zig-out*
 *cache*
 compile_commands.json
+_build
+*venv*
+*_doxygen
