@@ -31,7 +31,53 @@ Editor::Editor() {
 	SceneViewWindow 	scene_view;
 }
 
-void Editor::CreateMainMenuBar() {
+
+void Editor::Update() {
+}
+
+
+void Editor::Draw() {
+	DrawMainMenuBar();
+
+	for (size_t i = 0; i < window_count; i++) {
+		EditorWindow* window = editor_windows[i];
+		if (window->IsOpen()) {
+			window->Draw();
+		}
+	}
+
+	// if (ImGuiDemoOpen)
+	//	ImGui::ShowDemoWindow(&ImGuiDemoOpen);
+	// if (ImageViewer.Open)
+	//	ImageViewer.Show();
+	// if (SceneView.Open)
+	//	SceneView.Show();
+		
+	// scene.Render();
+}
+
+
+void Editor::Initialize() {
+	editor_windows = static_cast<EditorWindow *>(malloc(sizeof(EditorWindow)*window_count));
+	editor_windows[0] = new SceneView();
+	editor_windows[0]->Setup();
+	editor_windows[1] = new ImageViewer();
+	editor_windows[1]->Setup();
+
+}
+
+
+void Editor::Shutdown() {
+}
+
+
+Editor::~Editor() {
+	// Ensure resources are cleaned up on destruction
+	Shutdown();
+}
+
+
+void Editor::DrawMainMenuBar() {
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
@@ -53,6 +99,7 @@ void Editor::CreateMainMenuBar() {
 		ImGui::EndMainMenuBar();
 	}
 }
+//----------------------------------------------------------------------------------
 
 
 // Image Viewer Window
@@ -72,7 +119,7 @@ void ImageViewerWindow::Setup() {
 }
 
 
-void ImageViewerWindow::Show() {
+void ImageViewerWindow::Draw() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
 	Focused = false;

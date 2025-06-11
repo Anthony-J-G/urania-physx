@@ -24,7 +24,7 @@
 #include <math.h>
 
 // ** `physics` Includes
-#include <physics/scene.h>
+#include <physics/scene.hpp>
 
 // ** `win32` Includes
 #if defined(_WIN32) || defined(_WIN64)
@@ -100,19 +100,8 @@ int main(int argc, char* argv[]) {
 		ImGui_ImplRaylib_ProcessEvents();
 		ImGui::DockSpaceOverViewport(ImGui::GetWindowDockID(), ImGui::GetMainViewport(), 0);
 
-		DoMainMenu();		
-
-		if (ImGuiDemoOpen)
-			ImGui::ShowDemoWindow(&ImGuiDemoOpen);
-
-		if (ImageViewer.Open)
-			ImageViewer.Show();
-
-		if (SceneView.Open)
-			SceneView.Show();
+		editor.Draw();
 		
-		// scene.Render();
-
 		ImGui::Render();
     		ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
 

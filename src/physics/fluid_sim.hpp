@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "scene.h"
+#include "scene.hpp"
 
 #include <stdint.h>
 #include <assert.h>
