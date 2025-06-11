@@ -10,66 +10,30 @@
 ********************************************************************************************/
 
 
+// ** `raylib` Includes
 #include "raylib.h"
-#include "raymath.h"
 
+// ** imgui Includes
 #include "imgui.h"
-#include "rlImGui.h"
 #include "imgui_impl_raylib.h"
-#include "rlImGuiColors.h"
 
+// ** `runtime` Includes
+#include "editor.h" // ImageViewerWindow, SceneViewWindow
+
+// ** stdlib Includes
 #include <math.h>
 
+// ** `physics` Includes
+#include <physics/scene.h>
+
+// ** `win32` Includes
 #if defined(_WIN32) || defined(_WIN64)
 #	include "win32_dynamic_api.h"
+	PhysicsLibrary g_PhysicsLibraryApi;
 #endif // Win32 or Win64
 
 
-bool Quit = false;
-
-bool ImGuiDemoOpen = false;
-
-// DPI scaling functions
-float ScaleToDPIF(float value)
-{
-    return GetWindowScaleDPI().x * value;
-}
-
-int ScaleToDPII(int value)
-{
-    return int(GetWindowScaleDPI().x * value);
-}
-
-
-ImageViewerWindow ImageViewer;
-SceneViewWindow SceneView;
-
-void DoMainMenu()
-{
-	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit"))
-				Quit = true;
-
-			ImGui::EndMenu();
-		}
-
-		if (ImGui::BeginMenu("Window"))
-		{
-			ImGui::MenuItem("ImGui Demo", nullptr, &ImGuiDemoOpen);
-			ImGui::MenuItem("Image Viewer", nullptr, &ImageViewer.Open);
-			ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
-
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
-}
-
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	int screenWidth  = 800;
@@ -88,9 +52,8 @@ int main(int argc, char* argv[])
 	screenHeight = static_cast<int>(screenWidth * aspectRatio);
 	SetWindowSize(screenWidth, screenHeight);
 	SetWindowPosition(
-			abs(screenWidth - GetMonitorWidth(currentMonitor)) / 2,
-			abs(screenHeight - GetMonitorHeight(currentMonitor)) / 2
-
+		abs(screenWidth - GetMonitorWidth(currentMonitor)) / 2,
+		abs(screenHeight - GetMonitorHeight(currentMonitor)) / 2
 	);
 	// windowFlags ^= FLAG_WINDOW_HIDDEN;
 	// SetWindowState(windowFlags);
@@ -99,9 +62,14 @@ int main(int argc, char* argv[])
 	ImGui::StyleColorsDark();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;	
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	// FluidSimulationScene scene;
+	// Load Dynamic APIs
+	win32::LoadDynamicLibrary(g_PhysicsLibraryApi);
+
+	// 
+
+	static Scene* current_scene;
 	// scene.Init();
 
 	ImageViewer.Setup();
@@ -109,6 +77,7 @@ int main(int argc, char* argv[])
 
 	SceneView.Setup();
 	SceneView.Open = true;
+
 
 	// Main game loop
 	while (!WindowShouldClose() && !Quit) { // Detect window close button or ESC key

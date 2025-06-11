@@ -1,11 +1,62 @@
 #include "editor.h"
 
-#include "imgui.h"
+#include <raylib.h>
+#include <raymath.h>
+
+#include <imgui.h>
+
 #include "rlImGui.h"
-#include "imgui_impl_raylib.h"
-#include "rlImGuiColors.h"
 
 
+// Utility Functions
+//----------------------------------------------------------------------------------
+// Forward Declarations
+float 	ScaleToDPI(float value);
+int 	ScaleToDPI(int value);
+
+float ScaleToDPI(float value) {
+    return GetWindowScaleDPI().x * value;
+}
+
+
+int ScaleToDPI(int value) {
+    return int(GetWindowScaleDPI().x * value);
+}
+//---------------------------------------------------------------------------------- End Utility Functions
+
+// Editor
+//----------------------------------------------------------------------------------
+Editor::Editor() {
+	ImageViewerWindow 	img_viewer;
+	SceneViewWindow 	scene_view;
+}
+
+void Editor::CreateMainMenuBar() {
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Exit"))
+				should_quit = true;
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("Window"))
+		{
+			ImGui::MenuItem("ImGui Demo", nullptr, &ImGuiDemoOpen);
+			ImGui::MenuItem("Image Viewer", nullptr, &ImageViewer.Open);
+			ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+
+// Image Viewer Window
+//----------------------------------------------------------------------------------
 void ImageViewerWindow::Setup() {
 	Camera.zoom = 1;
 	Camera.target.x = 0;
@@ -23,7 +74,7 @@ void ImageViewerWindow::Setup() {
 
 void ImageViewerWindow::Show() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
 	Focused = false;
 
 	if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar)) {
@@ -81,8 +132,9 @@ void ImageViewerWindow::Show() {
 
 
 void ImageViewerWindow::Update() {
-	if (!Open)
+	if (!Open) {
 		return;
+	}		
 
 	if (IsWindowResized()) {
 		UnloadRenderTexture(ViewTexture);
@@ -95,36 +147,29 @@ void ImageViewerWindow::Update() {
 	Vector2 mousePos = GetMousePosition();
 
 	if (Focused) {
-		if (CurrentToolMode == ToolMode::Move)
-			{
-				// only do this tool when the mouse is in the content area of the window
-				if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect))
-				{
-					if (!Dragging)
-					{
-						LastMousePos = mousePos;
-						LastTarget = Camera.target;
-					}
-					Dragging = true;
-					Vector2 mouseDelta = Vector2Subtract(LastMousePos, mousePos);
-
-					mouseDelta.x /= Camera.zoom;
-					mouseDelta.y /= Camera.zoom;
-					Camera.target = Vector2Add(LastTarget, mouseDelta);
-
-					DirtyScene = true;
-
+		if (CurrentToolMode == ToolMode::Move) {
+			// only do this tool when the mouse is in the content area of the window
+			if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect)) {
+				if (!Dragging) {
+					LastMousePos = mousePos;
+					LastTarget = Camera.target;
 				}
-				else
-				{
-					Dragging = false;
-				}
+				Dragging = true;
+				Vector2 mouseDelta = Vector2Subtract(LastMousePos, mousePos);
+
+				mouseDelta.x /= Camera.zoom;
+				mouseDelta.y /= Camera.zoom;
+				Camera.target = Vector2Add(LastTarget, mouseDelta);
+
+				DirtyScene = true;
+
+			} else {
+				Dragging = false;
 			}
 		}
-		else
-		{
-			Dragging = false;
-		}
+	} else {
+		Dragging = false;
+	}
 
 	if (DirtyScene) {
 		DirtyScene = false;
@@ -152,86 +197,90 @@ void ImageViewerWindow::Shutdown() {
 	UnloadRenderTexture(ViewTexture);
 	UnloadTexture(ImageTexture);
 }
+//---------------------------------------------------------------------------------- End Image Viewer Window
 
 
-	void SceneViewWindow::Setup() {
-		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+// Scene View Window
+//----------------------------------------------------------------------------------
+void SceneViewWindow::Setup() {
+	ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
-		Camera.fovy = 45;
-		Camera.up.y = 1;
-		Camera.position.y = 3;
-		Camera.position.z = -25;
+	Camera.fovy = 45;
+	Camera.up.y = 1;
+	Camera.position.y = 3;
+	Camera.position.z = -25;
 
-		Image img = GenImageChecked(ScaleToDPII(256), ScaleToDPII(256), ScaleToDPII(32), ScaleToDPII(32), DARKGRAY, WHITE);
-		GridTexture = LoadTextureFromImage(img);
-		UnloadImage(img);
-		GenTextureMipmaps(&GridTexture);
-		SetTextureFilter(GridTexture, TEXTURE_FILTER_ANISOTROPIC_16X);
-		SetTextureWrap(GridTexture, TEXTURE_WRAP_CLAMP);
+	Image img = GenImageChecked(ScaleToDPI(256), ScaleToDPI(256), ScaleToDPI(32), ScaleToDPI(32), DARKGRAY, WHITE);
+	GridTexture = LoadTextureFromImage(img);
+	UnloadImage(img);
+	GenTextureMipmaps(&GridTexture);
+	SetTextureFilter(GridTexture, TEXTURE_FILTER_ANISOTROPIC_16X);
+	SetTextureWrap(GridTexture, TEXTURE_WRAP_CLAMP);
+}
+
+
+void SceneViewWindow::Shutdown() {
+	UnloadRenderTexture(ViewTexture);
+	UnloadTexture(GridTexture);
+}
+
+
+void SceneViewWindow::Show() {
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+
+	if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
+	{
+		Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+		// draw the view
+		rlImGuiImageRenderTextureFit(&ViewTexture, true);
 	}
+	ImGui::End();
+	ImGui::PopStyleVar();
+}
 
-	void SceneViewWindow::Shutdown() {
+
+void SceneViewWindow::Update() {
+	if (!Open)
+		return;
+
+	if (IsWindowResized())
+	{
 		UnloadRenderTexture(ViewTexture);
-		UnloadTexture(GridTexture);
+		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	}
 
-	void SceneViewWindow::Show() {
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPIF(400.0f), ScaleToDPIF(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+	float period = 10;
+	float magnitude = 25;
 
-		if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
+	Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
+
+	BeginTextureMode(ViewTexture);
+	ClearBackground(SKYBLUE);
+
+	BeginMode3D(Camera);
+
+	// grid of cube trees on a plane to make a "world"
+	DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
+	float spacing = 4;
+	int count = 5;
+
+	for (float x = -count * spacing; x <= count * spacing; x += spacing)
+	{
+		for (float z = -count * spacing; z <= count * spacing; z += spacing)
 		{
-			Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
-			// draw the view
-			rlImGuiImageRenderTextureFit(&ViewTexture, true);
+			Vector3 pos = { x, 0.5f, z };
+
+			Vector3 min = { x - 0.5f,0,z - 0.5f };
+			Vector3 max = { x + 0.5f,1,z + 0.5f };
+
+			DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
+			DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
 		}
-		ImGui::End();
-		ImGui::PopStyleVar();
 	}
 
-	void SceneViewWindow::Update() {
-		if (!Open)
-			return;
-
-		if (IsWindowResized())
-		{
-			UnloadRenderTexture(ViewTexture);
-			ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-		}
-
-		float period = 10;
-		float magnitude = 25;
-
-		Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
-
-		BeginTextureMode(ViewTexture);
-		ClearBackground(SKYBLUE);
-
-		BeginMode3D(Camera);
-
-		// grid of cube trees on a plane to make a "world"
-		DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
-		float spacing = 4;
-		int count = 5;
-
-		for (float x = -count * spacing; x <= count * spacing; x += spacing)
-		{
-			for (float z = -count * spacing; z <= count * spacing; z += spacing)
-			{
-				Vector3 pos = { x, 0.5f, z };
-
-				Vector3 min = { x - 0.5f,0,z - 0.5f };
-				Vector3 max = { x + 0.5f,1,z + 0.5f };
-
-				DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
-				DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
-			}
-		}
-
-		EndMode3D();
-		EndTextureMode();
-	}
-
-
-
+	EndMode3D();
+	EndTextureMode();
+}
+//---------------------------------------------------------------------------------- End Scene View Window
 
