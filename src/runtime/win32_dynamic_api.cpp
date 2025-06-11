@@ -1,4 +1,4 @@
-#include "win32_dynamic_api.h"
+#include "win32_dynamic_api.hpp"
 
 #include <stdio.h>
 #include <libloaderapi.h>

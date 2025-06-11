@@ -58,8 +58,9 @@ pub fn build(b: *std.Build) void {
         .language = .cpp,
         .flags = &.{},
         .files = &.{
-            "sample.cpp",
-            "fluid_sim.cpp",
+            "engine.cpp",
+            "scenes/sample.cpp",
+            "scenes/fluid_sim.cpp",
         },
     });    
 

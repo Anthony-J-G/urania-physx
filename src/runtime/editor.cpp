@@ -1,4 +1,4 @@
-#include "editor.h"
+#include "editor.hpp"
 
 #include <raylib.h>
 #include <raymath.h>
@@ -7,6 +7,20 @@
 
 #include "rlImGui.h"
 
+// ** `win32` Includes
+#if defined(_WIN32) || defined(_WIN64)
+#	include "win32_dynamic_api.hpp"
+#endif // Win32 or Win64
+
+
+// Editor Window Enumeration
+//----------------------------------------------------------------------------------
+enum EditorWindowIndex {
+	EDITOR_IMAGE_VIEWER = 0,
+	EDITOR_SCENE_VIEWER = 1,
+	EDITOR_SCENE_LIST	= 2,
+};
+//---------------------------------------------------------------------------------- End Utility Functions
 
 // Utility Functions
 //----------------------------------------------------------------------------------
@@ -26,48 +40,54 @@ int ScaleToDPI(int value) {
 
 // Editor
 //----------------------------------------------------------------------------------
-Editor::Editor() {
-	ImageViewerWindow 	img_viewer;
-	SceneViewWindow 	scene_view;
+Editor::Editor() {	
 }
 
 
 void Editor::Update() {
+	for (EditorWindow* window : editor_windows) {
+		window->Update();
+	}
 }
 
 
 void Editor::Draw() {
 	DrawMainMenuBar();
 
-	for (size_t i = 0; i < window_count; i++) {
-		EditorWindow* window = editor_windows[i];
-		if (window->IsOpen()) {
-			window->Draw();
-		}
+	for (EditorWindow* window : editor_windows) {
+		window->Draw();
 	}
 
-	// if (ImGuiDemoOpen)
-	//	ImGui::ShowDemoWindow(&ImGuiDemoOpen);
-	// if (ImageViewer.Open)
-	//	ImageViewer.Show();
-	// if (SceneView.Open)
-	//	SceneView.Show();
-		
-	// scene.Render();
+	if (show_imgui_demo) {
+		ImGui::ShowDemoWindow(&show_imgui_demo);
+	}	
 }
 
 
 void Editor::Initialize() {
-	editor_windows = static_cast<EditorWindow *>(malloc(sizeof(EditorWindow)*window_count));
-	editor_windows[0] = new SceneView();
-	editor_windows[0]->Setup();
-	editor_windows[1] = new ImageViewer();
-	editor_windows[1]->Setup();
+	// Load Dynamic APIs
+	win32::LoadDynamicLibrary(physics_api);
 
+	auto img_viewer	= new ImageViewerWindow();
+	auto scene_view 		= new SceneViewWindow();
+	auto scene_list 		= new SceneListWindow();
+
+	editor_windows.reserve(3);
+	editor_windows.push_back(static_cast<EditorWindow *>(img_viewer));
+	editor_windows.push_back(static_cast<EditorWindow *>(scene_view));
+	editor_windows.push_back(static_cast<EditorWindow *>(scene_list));
+
+	for (EditorWindow* window: editor_windows) {
+		window->Setup();
+	}
 }
 
 
 void Editor::Shutdown() {
+	for (EditorWindow* window : editor_windows) {
+		delete window;
+	}
+	editor_windows.clear();
 }
 
 
@@ -78,21 +98,19 @@ Editor::~Editor() {
 
 
 void Editor::DrawMainMenuBar() {
-	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Exit"))
+	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::MenuItem("Exit")) {
 				should_quit = true;
-
+			}				
 			ImGui::EndMenu();
-		}
+		}		
 
-		if (ImGui::BeginMenu("Window"))
-		{
-			ImGui::MenuItem("ImGui Demo", nullptr, &ImGuiDemoOpen);
-			ImGui::MenuItem("Image Viewer", nullptr, &ImageViewer.Open);
-			ImGui::MenuItem("3D View", nullptr, &SceneView.Open);
+		if (ImGui::BeginMenu("Window")) {
+			ImGui::MenuItem("ImGui Demo", nullptr, &show_imgui_demo);
+			// TODO(anthony-j-g): Fix these so they properly reference the window's boolean
+			// ImGui::MenuItem("Image Viewer", nullptr, &editor_windows[EDITOR_IMAGE_VIEWER]);
+			// ImGui::MenuItem("3D View", nullptr, &editor_windows[EDITOR_SCENE_VIEWER]);
 
 			ImGui::EndMenu();
 		}
@@ -112,6 +130,7 @@ void ImageViewerWindow::Setup() {
 	Camera.offset.x = GetScreenWidth() / 2.0f;
 	Camera.offset.y = GetScreenHeight() / 2.0f;
 
+	is_open = true;
 	ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	ImageTexture = LoadTexture("resources/parrots.png");
 
@@ -120,17 +139,19 @@ void ImageViewerWindow::Setup() {
 
 
 void ImageViewerWindow::Draw() {
+	if (!is_open) { return; }
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2(float(GetScreenWidth()), float(GetScreenHeight())));
-	Focused = false;
+	is_focused = false;
 
-	if (ImGui::Begin("Image Viewer", &Open, ImGuiWindowFlags_NoScrollbar)) {
+	if (ImGui::Begin("Image Viewer", &is_open, ImGuiWindowFlags_NoScrollbar)) {
 		// save off the screen space content rectangle
 		ContentRect = {
 			ImGui::GetWindowPos().x + ImGui::GetCursorScreenPos().x, ImGui::GetWindowPos().y + ImGui::GetCursorScreenPos().y, ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y 
 		};
 
-		Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
+		is_focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows);
 
 		ImVec2 size = ImGui::GetContentRegionAvail();
 
@@ -179,7 +200,7 @@ void ImageViewerWindow::Draw() {
 
 
 void ImageViewerWindow::Update() {
-	if (!Open) {
+	if (!is_open) {
 		return;
 	}		
 
@@ -193,7 +214,7 @@ void ImageViewerWindow::Update() {
 
 	Vector2 mousePos = GetMousePosition();
 
-	if (Focused) {
+	if (is_focused) {
 		if (CurrentToolMode == ToolMode::Move) {
 			// only do this tool when the mouse is in the content area of the window
 			if (IsMouseButtonDown(0) && CheckCollisionPointRec(mousePos, ContentRect)) {
@@ -257,6 +278,7 @@ void SceneViewWindow::Setup() {
 	Camera.position.y = 3;
 	Camera.position.z = -25;
 
+	is_open = true;
 	Image img = GenImageChecked(ScaleToDPI(256), ScaleToDPI(256), ScaleToDPI(32), ScaleToDPI(32), DARKGRAY, WHITE);
 	GridTexture = LoadTextureFromImage(img);
 	UnloadImage(img);
@@ -272,27 +294,10 @@ void SceneViewWindow::Shutdown() {
 }
 
 
-void SceneViewWindow::Show() {
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
-
-	if (ImGui::Begin("3D View", &Open, ImGuiWindowFlags_NoScrollbar))
-	{
-		Focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
-		// draw the view
-		rlImGuiImageRenderTextureFit(&ViewTexture, true);
-	}
-	ImGui::End();
-	ImGui::PopStyleVar();
-}
-
-
 void SceneViewWindow::Update() {
-	if (!Open)
-		return;
+	if (!is_open) { return; }
 
-	if (IsWindowResized())
-	{
+	if (IsWindowResized()) {
 		UnloadRenderTexture(ViewTexture);
 		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 	}
@@ -301,6 +306,8 @@ void SceneViewWindow::Update() {
 	float magnitude = 25;
 
 	Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
+
+	// if (current_scene != nullptr) { current_scene->Update(); }
 
 	BeginTextureMode(ViewTexture);
 	ClearBackground(SKYBLUE);
@@ -312,10 +319,8 @@ void SceneViewWindow::Update() {
 	float spacing = 4;
 	int count = 5;
 
-	for (float x = -count * spacing; x <= count * spacing; x += spacing)
-	{
-		for (float z = -count * spacing; z <= count * spacing; z += spacing)
-		{
+	for (float x = -count * spacing; x <= count * spacing; x += spacing) {
+		for (float z = -count * spacing; z <= count * spacing; z += spacing) {
 			Vector3 pos = { x, 0.5f, z };
 
 			Vector3 min = { x - 0.5f,0,z - 0.5f };
@@ -329,5 +334,45 @@ void SceneViewWindow::Update() {
 	EndMode3D();
 	EndTextureMode();
 }
+
+
+void SceneViewWindow::Draw() {
+	if (!is_open) { return; }
+		
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
+
+	if (ImGui::Begin("3D View", &is_open, ImGuiWindowFlags_NoScrollbar)) {
+		is_focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+		// draw the view
+		rlImGuiImageRenderTextureFit(&ViewTexture, true);
+	}
+	ImGui::End();
+	ImGui::PopStyleVar();
+}
 //---------------------------------------------------------------------------------- End Scene View Window
+
+
+// Scene List Window
+//----------------------------------------------------------------------------------
+void SceneListWindow::Setup() {
+	is_open = true;
+}
+
+
+void SceneListWindow::Shutdown() {
+}
+
+
+void SceneListWindow::Update() {
+}
+
+
+void SceneListWindow::Draw() {
+	if (!is_open) { return; }
+
+	ImGui::Begin("Scene List");
+	ImGui::End();
+}
+//---------------------------------------------------------------------------------- End Scene List Window
 

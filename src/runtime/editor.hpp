@@ -1,8 +1,13 @@
 #pragma once
 
+#include "win32_dynamic_api.hpp"
 #include <raylib.h>
 
 #include <stdlib.h>
+#include <physics/scene.hpp>
+
+#include <vector>
+
 
 
 // Forward Declartions
@@ -12,14 +17,16 @@ class ImageViewerWindow;
 class SceneViewWindow;
 
 
+
 class Editor {
+	friend SceneViewWindow;
 public:
 	Editor();	
 	//! Explicit Fluid destructor to ensure proper freeing of particle buffers
-    	~Editor();
-    	//! Deleted copy construtor
-    	Editor(const Editor& other) = delete;
-    	//! Deleted copy assignment construtor
+	~Editor();
+	//! Deleted copy construtor
+	Editor(const Editor& other) = delete;
+	//! Deleted copy assignment construtor
 	Editor& operator=(const Editor& other) = delete;
 	
 	void Initialize();
@@ -28,32 +35,41 @@ public:
 	void Update();
 	void Draw();
 
+	bool ShouldQuit() { return should_quit; }
+
 private:
 	void DrawMainMenuBar();
 
 private:
-	bool should_quit = false;
-	bool show_imgui_demo = false;
+	PhysicsLibrary physics_api;
+	Scene* current_scene				= nullptr;
 
-	EditorWindow* editor_windows[];
-	static const size_t window_count = 2;
+	bool should_quit 					= false;
+	bool show_imgui_demo 				= false;
+
+	std::vector<EditorWindow *> editor_windows;
+	static const size_t window_count 	= 3;
 };
 
 
 class EditorWindow {
 
 public:	
+	virtual ~EditorWindow() {};
 	virtual void Setup() = 0;
 	virtual void Shutdown() = 0;
 	virtual void Draw() = 0;
 	virtual void Update() = 0;
 
 	bool IsOpen() { return is_open; }
-protected:
-	bool Focused = false;
+	void ToggleOpen() { is_open = !is_open; }
+
+protected:	
 	Rectangle ContentRect = { 0 };
-	bool is_open = false;
 	RenderTexture ViewTexture;
+	
+	bool is_focused = false;
+	bool is_open = false;	
 
 };
 
@@ -62,9 +78,9 @@ class ImageViewerWindow : public EditorWindow {
 
 public:
 	void Setup() override;
+	void Shutdown() override;
 	void Draw() override;
 	void Update() override;
-	void Shutdown() override;
 
 	Texture ImageTexture;
 	Camera2D Camera = { 0 };
@@ -75,8 +91,7 @@ public:
 
 	bool DirtyScene = false;
 
-	enum class ToolMode
-	{
+	enum class ToolMode {
 		None,
 		Move,
 	};
@@ -88,13 +103,12 @@ public:
 
 
 class SceneViewWindow : public EditorWindow {
-
+	friend Editor;
 public:
-
 	void Setup() override;
-	void Shutdown() override;
-	void Show() override;
-	void Update() override;	
+	void Shutdown() override;	
+	void Update() override;
+	void Draw() override;
 
 	Camera3D Camera = { 0 };
 	Texture2D GridTexture = { 0 };
@@ -102,4 +116,10 @@ public:
 
 
 class SceneListWindow : public EditorWindow {
+
+public:
+	void Setup() override;
+	void Shutdown() override;
+	void Update() override;
+	void Draw() override;
 };
