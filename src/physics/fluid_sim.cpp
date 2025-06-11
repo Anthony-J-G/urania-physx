@@ -380,6 +380,11 @@ void FluidSimulationScene::Render() {
 
     // EndMode2D();
 }
+
+
+void FluidSimulationScene::Shutdown() {
+}
+
 //---------------------------------------------------------------------------------- End Fluid Simulation Scene
 
 

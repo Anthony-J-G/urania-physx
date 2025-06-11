@@ -1,6 +1,8 @@
 #pragma once
 
-#include <cstdint>
+
+#include "scene.h"
+
 #include <stdint.h>
 #include <assert.h>
 
@@ -68,16 +70,17 @@ private:
 
 
 // 
-class FluidSimulationScene {
+class FluidSimulationScene : public Scene {
 public:
     FluidSimulationScene();
     ~FluidSimulationScene() {};
     FluidSimulationScene(const FluidSimulationScene& other) = delete;
     FluidSimulationScene& operator=(const FluidSimulationScene& other) = delete;
 
-    void Init();
-    void Update(float deltatime);
-    void Render();
+    void Init() override;
+    void Update(float deltatime) override;
+    void Render() override;
+    void Shutdown() override;
 
 private:
     EulerFluid* fluid;
