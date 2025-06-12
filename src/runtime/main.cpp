@@ -1,15 +1,3 @@
-/*******************************************************************************************
-*
-*   raylib-extras [ImGui] example - editor
-*
-*	This is a more complex ImGui Integration
-*	It shows how to build windows on top of 2d and 3d views using a render texture
-*
-*   Copyright (c) 2021 Jeffery Myers
-*
-********************************************************************************************/
-
-
 // ** `raylib` Includes
 #include "raylib.h"
 
