@@ -68,7 +68,7 @@ void Editor::Initialize() {
 	// Load Dynamic APIs
 	win32::LoadDynamicLibrary(physics_api);
 
-	auto img_viewer	= new ImageViewerWindow();
+	auto img_viewer			= new ImageViewerWindow();
 	auto scene_view 		= new SceneViewWindow();
 	auto scene_list 		= new SceneListWindow();
 
