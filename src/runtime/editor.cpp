@@ -78,7 +78,7 @@ void Editor::Initialize() {
 	editor_windows.push_back(static_cast<EditorWindow *>(scene_list));
 
 	for (EditorWindow* window: editor_windows) {
-		window->Setup();
+		window->Setup(this);
 	}
 }
 
@@ -122,7 +122,7 @@ void Editor::DrawMainMenuBar() {
 
 // Image Viewer Window
 //----------------------------------------------------------------------------------
-void ImageViewerWindow::Setup() {
+void ImageViewerWindow::Setup(Editor* editor_ref) {
 	Camera.zoom = 1;
 	Camera.target.x = 0;
 	Camera.target.y = 0;
@@ -270,7 +270,9 @@ void ImageViewerWindow::Shutdown() {
 
 // Scene View Window
 //----------------------------------------------------------------------------------
-void SceneViewWindow::Setup() {
+void SceneViewWindow::Setup(Editor* editor_ref) {
+	parent = editor_ref;
+	parent->current_scene = parent->physics_api.GetScene("OscillatingCircle");
 	ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
 	Camera.fovy = 45;
@@ -289,6 +291,7 @@ void SceneViewWindow::Setup() {
 
 
 void SceneViewWindow::Shutdown() {
+	parent->physics_api.Scene__Shutdown();
 	UnloadRenderTexture(ViewTexture);
 	UnloadTexture(GridTexture);
 }
@@ -300,38 +303,37 @@ void SceneViewWindow::Update() {
 	if (IsWindowResized()) {
 		UnloadRenderTexture(ViewTexture);
 		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-	}
-
+	}	
+	parent->physics_api.Scene__Update(GetFrameTime());
 	float period = 10;
 	float magnitude = 25;
 
 	Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
 
-	// if (current_scene != nullptr) { current_scene->Update(); }
-
 	BeginTextureMode(ViewTexture);
 	ClearBackground(SKYBLUE);
 
-	BeginMode3D(Camera);
-
-	// grid of cube trees on a plane to make a "world"
-	DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
-	float spacing = 4;
-	int count = 5;
-
-	for (float x = -count * spacing; x <= count * spacing; x += spacing) {
-		for (float z = -count * spacing; z <= count * spacing; z += spacing) {
-			Vector3 pos = { x, 0.5f, z };
-
-			Vector3 min = { x - 0.5f,0,z - 0.5f };
-			Vector3 max = { x + 0.5f,1,z + 0.5f };
-
-			DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
-			DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
-		}
-	}
-
-	EndMode3D();
+	parent->physics_api.Scene__Render();
+	// BeginMode3D(Camera);
+// 
+	// // grid of cube trees on a plane to make a "world"
+	// DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
+	// float spacing = 4;
+	// int count = 5;
+// 
+	// for (float x = -count * spacing; x <= count * spacing; x += spacing) {
+	// 	for (float z = -count * spacing; z <= count * spacing; z += spacing) {
+	// 		Vector3 pos = { x, 0.5f, z };
+// 
+	// 		Vector3 min = { x - 0.5f,0,z - 0.5f };
+	// 		Vector3 max = { x + 0.5f,1,z + 0.5f };
+// 
+	// 		DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
+	// 		DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
+	// 	}
+	// }
+// 
+	// EndMode3D();
 	EndTextureMode();
 }
 
@@ -355,7 +357,7 @@ void SceneViewWindow::Draw() {
 
 // Scene List Window
 //----------------------------------------------------------------------------------
-void SceneListWindow::Setup() {
+void SceneListWindow::Setup(Editor* editor_ref) {
 	is_open = true;
 }
 

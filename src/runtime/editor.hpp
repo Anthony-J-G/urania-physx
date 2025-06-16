@@ -1,12 +1,14 @@
 #pragma once
 
-#include "win32_dynamic_api.hpp"
+#include "common_dynamic_api.hpp"
+
 #include <raylib.h>
 
 #include <stdlib.h>
-#include <physics/scene.hpp>
 
 #include <vector>
+
+#include <physics/scene.hpp>
 
 
 
@@ -56,7 +58,7 @@ class EditorWindow {
 
 public:	
 	virtual ~EditorWindow() {};
-	virtual void Setup() = 0;
+	virtual void Setup(Editor* editor_ref) = 0;
 	virtual void Shutdown() = 0;
 	virtual void Draw() = 0;
 	virtual void Update() = 0;
@@ -69,15 +71,16 @@ protected:
 	RenderTexture ViewTexture;
 	
 	bool is_focused = false;
-	bool is_open = false;	
+	bool is_open = false;
 
+	Editor* parent;
 };
 
 
 class ImageViewerWindow : public EditorWindow {
 
 public:
-	void Setup() override;
+	void Setup(Editor* editor_ref) override;
 	void Shutdown() override;
 	void Draw() override;
 	void Update() override;
@@ -105,8 +108,8 @@ public:
 class SceneViewWindow : public EditorWindow {
 	friend Editor;
 public:
-	void Setup() override;
-	void Shutdown() override;	
+	void Setup(Editor* editor_ref) override;
+	void Shutdown() override;
 	void Update() override;
 	void Draw() override;
 
@@ -118,7 +121,7 @@ public:
 class SceneListWindow : public EditorWindow {
 
 public:
-	void Setup() override;
+	void Setup(Editor* editor_ref) override;
 	void Shutdown() override;
 	void Update() override;
 	void Draw() override;

@@ -34,6 +34,11 @@ OscillatingCircleScene::OscillatingCircleScene() {
 
 
 void OscillatingCircleScene::Init() {
+
+}
+
+
+void OscillatingCircleScene::Shutdown() {
 }
 
 

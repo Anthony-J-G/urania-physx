@@ -1,8 +1,8 @@
 #pragma once
 
 
-struct PhysicsLibrary {
-};
+#include "common_dynamic_api.hpp"
+
 
 
 namespace win32 {
