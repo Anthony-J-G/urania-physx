@@ -13,5 +13,4 @@ struct PhysicsLibrary {
     void (*Scene__Update)(float);
     void (*Scene__Render)();
     void (*Scene__Shutdown)();
-    int load_scene_from_list;
 };

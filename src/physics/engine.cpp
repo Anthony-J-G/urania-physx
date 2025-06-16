@@ -12,7 +12,10 @@ using Map = std::unordered_map<const char*, Scene *>;
 static Map g_SceneMapping;
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/dev
 void InitEngine() {
     printf("[physics] Engine initialized!");
     RegisterScene("OscillatingCircle", static_cast<Scene*>(new OscillatingCircleScene()));

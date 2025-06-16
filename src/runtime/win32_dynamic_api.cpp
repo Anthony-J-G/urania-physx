@@ -21,7 +21,6 @@ void LoadDynamicLibrary(PhysicsLibrary& api) {
 
 	api.is_loaded = true; // Assume true, and set false if a procedure fails to load
 
-	int x;
 	api.EngineInit 	= (void (*)()) GetProcAddress(g_PhysicsLibraryHandle,
 		"_Z10InitEnginev"
 	);
