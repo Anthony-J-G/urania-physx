@@ -7,6 +7,6 @@
 
 namespace win32 {
 
-void LoadDynamicLibrary(PhysicsLibrary& api);
+void LoadEngineLibrary(PhysicsLibrary& api);
 
 }

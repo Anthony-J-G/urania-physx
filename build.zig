@@ -91,7 +91,10 @@ pub fn build(b: *std.Build) void {
         .flags = &.{},
         .files = &.{
             "main.cpp",
-            "editor/editor.cpp"
+            "editor/editor.cpp",
+            "editor/image_viewer_window.cpp",
+            "editor/scene_list_window.cpp",
+            "editor/scene_view_window.cpp",
         },
     });
     if (target.result.os.tag == .windows) {

@@ -15,16 +15,13 @@
 // Forward Declartions
 class Editor;
 class EditorWindow;
-class ImageViewerWindow;
-class SceneViewWindow;
-
 
 
 /*!
  *	Runtime specific class that is designed to be used for viewing scenes in an interactive development environment.
  */
 class Editor final {
-	friend SceneViewWindow;
+
 public:
 	Editor();
 	~Editor();
@@ -38,12 +35,13 @@ public:
 	void Draw();
 
 	bool ShouldQuit() { return should_quit; }
+	const PhysicsLibrary& CallEngine();
 
 private:
 	void DrawMainMenuBar();
 
 private:
-	PhysicsLibrary physics_api;
+	PhysicsLibrary engine;
 	Scene* current_scene				= nullptr;
 
 	bool should_quit 					= false;
@@ -77,52 +75,7 @@ protected:
 };
 
 
-class ImageViewerWindow : public EditorWindow {
+// Utility Functions
 
-public:
-	void Setup(Editor* editor_ref) override;
-	void Shutdown() override;
-	void Draw() override;
-	void Update() override;
-
-	Texture ImageTexture;
-	Camera2D Camera = { 0 };
-
-	Vector2 LastMousePos = { 0 };
-	Vector2 LastTarget = { 0 };
-	bool Dragging = false;
-
-	bool DirtyScene = false;
-
-	enum class ToolMode {
-		None,
-		Move,
-	};
-
-	ToolMode CurrentToolMode = ToolMode::None;
-
-	void UpdateRenderTexture();	
-};
-
-
-class SceneViewWindow : public EditorWindow {
-	friend Editor;
-public:
-	void Setup(Editor* editor_ref) override;
-	void Shutdown() override;
-	void Update() override;
-	void Draw() override;
-
-	Camera3D Camera = { 0 };
-	Texture2D GridTexture = { 0 };
-};
-
-
-class SceneListWindow : public EditorWindow {
-
-public:
-	void Setup(Editor* editor_ref) override;
-	void Shutdown() override;
-	void Update() override;
-	void Draw() override;
-};
+float 	ScaleToDPI(float value);
+int 	ScaleToDPI(int value);

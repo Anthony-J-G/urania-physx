@@ -19,10 +19,9 @@ int main(int argc, char* argv[]) {
 	// Initialization
 	//--------------------------------------------------------------------------------------
 	int screenWidth  = 800;
-	int screenHeight = 600;
+	int screenHeight = 600;	
 
-	Editor editor;	
-
+	// ** Raylib/Raylib Window
 	// do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
 	// use the native resolution and scale your geometry.
 	int windowFlags = FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_MAXIMIZED | FLAG_WINDOW_RESIZABLE;
@@ -43,12 +42,15 @@ int main(int argc, char* argv[]) {
 	// windowFlags ^= FLAG_WINDOW_HIDDEN;
 	// SetWindowState(windowFlags);
 
+	// ** Dear ImGui
 	ImGui::CreateContext();
 	ImGui::StyleColorsDark();
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+	// ** Editor
+	Editor editor;
 	editor.Initialize();
 
 	// Main game loop
