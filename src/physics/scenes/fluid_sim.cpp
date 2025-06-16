@@ -1,8 +1,6 @@
 #include "fluid_sim.hpp"
 
-
-#include <cstddef>
-#include <cstring>
+#include <string.h>
 #include <stdlib.h>
 #include <raylib.h>
 #include <rlgl.h>
