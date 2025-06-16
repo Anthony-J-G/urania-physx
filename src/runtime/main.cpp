@@ -63,9 +63,6 @@ int main(int argc, char* argv[]) {
 
 	editor.Initialize();
 
-	static Scene* current_scene = nullptr;
-	// current_scene.Init();	
-
 	// Main game loop
 	while (!WindowShouldClose() && !editor.ShouldQuit()) { // Detect window close button or ESC key
 		// Update Step

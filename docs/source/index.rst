@@ -19,7 +19,7 @@ documentation for details.
    :caption: Contents:
 
    administration/index
-   design/index
+   engine/index
+   runtime/index
    simulations/index
-   specification/index
 
