@@ -9,8 +9,11 @@
 
 // ** `win32` Includes
 #if defined(_WIN32) || defined(_WIN64)
-#	include "win32_dynamic_api.hpp"
-#endif // Win32 or Win64
+#	include "../win32_dynamic_api.hpp"
+#else // Win32 or Win64
+// TODO(anthony-j-g): enable this for Linux and OSX
+#	error "Dynamic reloading not supported in OS other than Windows!"
+#endif
 
 
 // Editor Window Enumeration
@@ -37,6 +40,7 @@ int ScaleToDPI(int value) {
     return int(GetWindowScaleDPI().x * value);
 }
 //---------------------------------------------------------------------------------- End Utility Functions
+
 
 // Editor
 //----------------------------------------------------------------------------------

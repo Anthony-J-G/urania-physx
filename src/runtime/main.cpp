@@ -6,7 +6,7 @@
 #include "imgui_impl_raylib.h"
 
 // ** `runtime` Includes
-#include "editor.hpp" // ImageViewerWindow, SceneViewWindow
+#include "editor/editor.hpp" // ImageViewerWindow, SceneViewWindow
 
 // ** stdlib Includes
 #include <math.h>

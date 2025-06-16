@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common_dynamic_api.hpp"
+#include "../common_dynamic_api.hpp"
 
 #include <raylib.h>
 
@@ -20,15 +20,15 @@ class SceneViewWindow;
 
 
 
-class Editor {
+/*!
+ *	Runtime specific class that is designed to be used for viewing scenes in an interactive development environment.
+ */
+class Editor final {
 	friend SceneViewWindow;
 public:
-	Editor();	
-	//! Explicit Fluid destructor to ensure proper freeing of particle buffers
+	Editor();
 	~Editor();
-	//! Deleted copy construtor
 	Editor(const Editor& other) = delete;
-	//! Deleted copy assignment construtor
 	Editor& operator=(const Editor& other) = delete;
 	
 	void Initialize();
