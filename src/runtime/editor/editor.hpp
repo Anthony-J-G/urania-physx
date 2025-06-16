@@ -2,6 +2,7 @@
 
 #include "../common_dynamic_api.hpp"
 
+#include <cstddef>
 #include <raylib.h>
 
 #include <stdlib.h>
@@ -37,12 +38,27 @@ public:
 	bool ShouldQuit() { return should_quit; }
 	const PhysicsLibrary& CallEngine();
 
+	void SetCurrentScene(Scene_API* new_scene) { 
+		if (new_scene == nullptr) {
+			return;
+		}
+		if (current_scene != nullptr && current_scene->shutdown_fn != nullptr) {
+			current_scene->shutdown_fn();
+		}
+		
+		current_scene = new_scene;
+		if (current_scene->initialize_fn) {
+			current_scene->initialize_fn();
+		}		
+	} 
+	Scene_API* GetCurrentScene() { return current_scene; }
+
 private:
 	void DrawMainMenuBar();
 
 private:
 	PhysicsLibrary engine;
-	Scene* current_scene				= nullptr;
+	Scene_API* current_scene			= nullptr;
 
 	bool should_quit 					= false;
 	bool show_imgui_demo 				= false;
@@ -78,4 +94,4 @@ protected:
 // Utility Functions
 
 float 	ScaleToDPI(float value);
-int 	ScaleToDPI(int value);
+int 	ScaleToDPI(int value); 

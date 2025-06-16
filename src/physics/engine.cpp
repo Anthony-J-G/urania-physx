@@ -1,8 +1,9 @@
 #include "engine.hpp"
+#include "scene.hpp"
 
-#include <stdio.h>
+#include "scenes/sample.hpp"
 
 
 void InitEngine() {
-    printf("[physics] Engine initialized!");
+    RegisterScene(GenerateSampleScene);
 }

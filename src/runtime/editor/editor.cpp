@@ -74,14 +74,14 @@ void Editor::Initialize() {
 	// Load Dynamic APIs
 	LoadEngineLibrary(engine);
 
-	auto img_viewer	= new ImageViewerWindow();
-	auto scene_view 		= new SceneViewWindow();
-	auto scene_list 		= new SceneListWindow();
+	auto image_viewer_window	= new ImageViewerWindow();
+	auto scene_view_window		= new SceneViewWindow();
+	auto scene_list_window		= new SceneListWindow();
 
 	editor_windows.reserve(3);
-	editor_windows.push_back(static_cast<EditorWindow *>(img_viewer));
-	editor_windows.push_back(static_cast<EditorWindow *>(scene_view));
-	editor_windows.push_back(static_cast<EditorWindow *>(scene_list));
+	editor_windows.push_back(static_cast<EditorWindow *>(image_viewer_window));
+	editor_windows.push_back(static_cast<EditorWindow *>(scene_view_window));
+	editor_windows.push_back(static_cast<EditorWindow *>(scene_list_window));
 
 	for (EditorWindow* window: editor_windows) {
 		window->Setup(this);
@@ -100,6 +100,11 @@ void Editor::Shutdown() {
 Editor::~Editor() {
 	// Ensure resources are cleaned up on destruction
 	Shutdown();
+}
+
+
+const PhysicsLibrary& Editor::CallEngine() {
+	return engine;
 }
 
 

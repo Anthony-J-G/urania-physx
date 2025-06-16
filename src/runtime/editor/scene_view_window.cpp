@@ -46,37 +46,19 @@ void SceneViewWindow::Update() {
 	if (IsWindowResized()) {
 		UnloadRenderTexture(ViewTexture);
 		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-	}	
-	// parent->physics_api.Scene__Update(GetFrameTime());
-	float period = 10;
-	float magnitude = 25;
+	}
 
-	Camera.position.x = sinf(float(GetTime() / period)) * magnitude;
+	if (is_focused && parent->GetCurrentScene() != nullptr) {
+		parent->GetCurrentScene()->update_fn(GetFrameTime());
+	}
 
 	BeginTextureMode(ViewTexture);
 	ClearBackground(SKYBLUE);
+	
+	if (parent->GetCurrentScene() != nullptr) {
+		parent->GetCurrentScene()->render_fn();
+	}
 
-	// parent->physics_api.Scene__Render();
-	// BeginMode3D(Camera);
-// 
-	// // grid of cube trees on a plane to make a "world"
-	// DrawPlane(Vector3{ 0, 0, 0 }, Vector2{ 50, 50 }, BEIGE); // simple world plane
-	// float spacing = 4;
-	// int count = 5;
-// 
-	// for (float x = -count * spacing; x <= count * spacing; x += spacing) {
-	// 	for (float z = -count * spacing; z <= count * spacing; z += spacing) {
-	// 		Vector3 pos = { x, 0.5f, z };
-// 
-	// 		Vector3 min = { x - 0.5f,0,z - 0.5f };
-	// 		Vector3 max = { x + 0.5f,1,z + 0.5f };
-// 
-	// 		DrawCube(Vector3{ x, 1.5f, z }, 1, 1, 1, GREEN);
-	// 		DrawCube(Vector3{ x, 0.5f, z }, 0.25f, 1, 0.25f, BROWN);
-	// 	}
-	// }
-// 
-	// EndMode3D();
 	EndTextureMode();
 }
 
