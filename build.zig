@@ -6,6 +6,9 @@ const OptimizeMode = std.builtin.OptimizeMode;
 const ccpputilz = @import("ccpputilz");
 const compile_commands = ccpputilz.compile_commands;
 
+const tests = @import("tests/tests.zig");
+
+
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
