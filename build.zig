@@ -108,6 +108,7 @@ fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Modu
             "scene.cpp",
             "scenes/sample.cpp",
             "scenes/fluid_sim.cpp",
+            "scenes/euler_fluid_sim_2d.cpp",
         },
     });    
 
