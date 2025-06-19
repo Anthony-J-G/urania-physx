@@ -8,6 +8,7 @@
 #include <imgui.h>
 
 // ** Editor Windows
+#include "compiler_window.hpp"
 #include "scene_list_window.hpp"
 #include "scene_view_window.hpp"
 #include "image_viewer_window.hpp"
@@ -28,6 +29,7 @@ enum EditorWindowIndex {
 	EDITOR_IMAGE_VIEWER = 0,
 	EDITOR_SCENE_VIEWER = 1,
 	EDITOR_SCENE_LIST	= 2,
+	EDITOR_COMPILER		= 3,
 };
 //---------------------------------------------------------------------------------- End Utility Functions
 
@@ -77,11 +79,13 @@ void Editor::Initialize() {
 	auto image_viewer_window	= new ImageViewerWindow();
 	auto scene_view_window		= new SceneViewWindow();
 	auto scene_list_window		= new SceneListWindow();
+	auto compiler_window			= new CompilerWindow();
 
 	editor_windows.reserve(3);
 	editor_windows.push_back(static_cast<EditorWindow *>(image_viewer_window));
 	editor_windows.push_back(static_cast<EditorWindow *>(scene_view_window));
 	editor_windows.push_back(static_cast<EditorWindow *>(scene_list_window));
+	editor_windows.push_back(static_cast<EditorWindow *>(compiler_window));
 
 	for (EditorWindow* window: editor_windows) {
 		window->Setup(this);
@@ -120,8 +124,9 @@ void Editor::DrawMainMenuBar() {
 		if (ImGui::BeginMenu("Window")) {
 			ImGui::MenuItem("ImGui Demo", nullptr, &show_imgui_demo);
 			// TODO(anthony-j-g): Fix these so they properly reference the window's boolean
-			// ImGui::MenuItem("Image Viewer", nullptr, &editor_windows[EDITOR_IMAGE_VIEWER]);
-			// ImGui::MenuItem("3D View", nullptr, &editor_windows[EDITOR_SCENE_VIEWER]);
+			ImGui::MenuItem("Image Viewer", nullptr, &static_cast<SceneViewWindow*>(editor_windows[EDITOR_IMAGE_VIEWER])->is_open);
+			ImGui::MenuItem("3D View", nullptr, &static_cast<SceneViewWindow*>(editor_windows[EDITOR_SCENE_VIEWER])->is_open);
+			ImGui::MenuItem("Compiler", nullptr, &static_cast<SceneViewWindow*>(editor_windows[EDITOR_COMPILER])->is_open);
 
 			ImGui::EndMenu();
 		}

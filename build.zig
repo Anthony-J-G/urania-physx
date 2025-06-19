@@ -3,6 +3,9 @@ const Module = std.Build.Module;
 const ResolvedTarget = std.Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 
+const reload = @import("config/reload.zig").reload;
+const modules = @import("config/modules.zig");
+
 const ccpputilz = @import("ccpputilz");
 const compile_commands = ccpputilz.compile_commands;
 
@@ -10,6 +13,13 @@ const tests = @import("tests/tests.zig");
 
 
 pub fn build(b: *std.Build) void {
+    if (
+        b.option(bool, "recompile-from-engine", "for internal use by the engine only") orelse false
+    ) {
+        reload(b);
+        return;
+    }
+
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
@@ -18,7 +28,7 @@ pub fn build(b: *std.Build) void {
     const libimgui = b.addLibrary(.{
         .linkage = .static,
         .name = "imgui",
-        .root_module = generateImGuiModule(
+        .root_module = modules.generateImGuiModule(
             b, target, optimize
         ),
     });
@@ -35,7 +45,7 @@ pub fn build(b: *std.Build) void {
     const engine = b.addLibrary(.{
         .linkage = .dynamic,
         .name = "physics",
-        .root_module = generateEngineModule(
+        .root_module = modules.generateEngineModule(
             b, target, optimize
         )
     });    
@@ -53,7 +63,7 @@ pub fn build(b: *std.Build) void {
     // ------------------------------------------------------------
     const exe = b.addExecutable(.{
         .name = "runtime",
-        .root_module = generateRuntimeModule(
+        .root_module = modules.generateRuntimeModule(
             b, target, optimize
         )
     });
@@ -74,142 +84,4 @@ pub fn build(b: *std.Build) void {
         engine,
         exe,
     });
-}
-
-
-fn generateEditorModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
-        .link_libc = true,
-        .link_libcpp = false,
-    });
-
-    return module;
-}
-
-
-fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    const module_directory = b.path("src/physics/");
-
-    const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
-        .link_libc = true,
-        .link_libcpp = true,
-    });
-    // ** Sources
-    module.addCSourceFiles(.{
-        .root = module_directory,
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "engine.cpp",
-            "scene.cpp",
-            "scenes/sample.cpp",
-            "scenes/fluid_sim.cpp",
-            "scenes/euler_fluid_sim_2d.cpp",
-        },
-    });    
-
-    // ** Includes
-    module.addIncludePath(b.path("src"));
-    module.addIncludePath(module_directory);
-    module.addIncludePath(b.path("zig-out/include"));
-    return module;
-}
-
-
-fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    // ** Dependencies
-    const rl_imgui = b.dependency("rlimgui", .{});
-
-    const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
-        .link_libc = true,
-        .link_libcpp = true,
-    });
-    // ** Sources
-    module.addCSourceFiles(.{
-        .root = b.path("src/runtime"),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "main.cpp",
-            "editor/editor.cpp",
-            "editor/image_viewer_window.cpp",
-            "editor/scene_list_window.cpp",
-            "editor/scene_view_window.cpp",
-        },
-    });
-    if (t.result.os.tag == .windows) {
-        module.addCSourceFiles(.{
-            .root = b.path("src/runtime"),
-            .language = .cpp,
-            .flags = &.{},
-            .files = &.{
-                "win32_dynamic_api.cpp",
-            },
-        });
-    }
-    module.addCSourceFiles(.{
-        .root = rl_imgui.path(""),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "rlImGui.cpp",
-        },
-    });
-
-    // ** Include Paths
-    module.addIncludePath(b.path("src"));
-    module.addIncludePath(b.path("src/runtime/"));
-    module.addIncludePath(rl_imgui.path(""));    
-    module.addIncludePath(b.path("zig-out/include"));
-
-    return module;
-}
-
-
-fn generateImGuiModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    // ** Dependencies
-    const imgui = b.dependency("imgui", .{});
-
-    const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
-        .link_libc = true,
-        .link_libcpp = false,
-    });
-
-    // ** Sources
-    module.addCSourceFiles(.{
-        .root = imgui.path(""),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "imgui.cpp",
-            "imgui_demo.cpp",
-            "imgui_draw.cpp",
-            "imgui_tables.cpp",
-            "imgui_widgets.cpp",
-        },
-    });
-
-    // ** Include Paths
-    module.addIncludePath(imgui.path(""));
-
-    return module;    
-}
-
-
-fn generateCommonModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
-        .link_libc = true,
-        .link_libcpp = false,
-    });
-    return module;
 }
