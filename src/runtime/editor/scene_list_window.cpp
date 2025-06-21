@@ -1,4 +1,5 @@
 #include "scene_list_window.hpp"
+#include "editor.hpp"
 
 
 // ** `raylib` Includes
@@ -11,6 +12,10 @@
 
 // Scene List Window
 //----------------------------------------------------------------------------------
+SceneListWindow::SceneListWindow(const char* _title): EditorWindow(_title) {
+}
+
+
 void SceneListWindow::Setup(Editor* editor_ref) {
 	parent = editor_ref;
 	is_open = true;

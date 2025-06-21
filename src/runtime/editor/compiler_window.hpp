@@ -6,7 +6,10 @@
 
 
 struct CompilerWindow : public EditorWindow {
+    friend Editor;
+public:
     CompilerWindow();
+    CompilerWindow(const char* _title);
     ~CompilerWindow();
     
     void    Setup(Editor* editor_ref) override;
@@ -21,7 +24,6 @@ struct CompilerWindow : public EditorWindow {
     int     TextEditCallback(ImGuiInputTextCallbackData* data);
 
 private:
-    const char*           title = "Example: Console";
     char                  InputBuf[256];
     ImVector<char*>       Items;
     ImVector<const char*> Commands;

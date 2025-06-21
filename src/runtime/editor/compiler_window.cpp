@@ -60,7 +60,7 @@ static void  Strtrim(char* s) {
 
 // Compiler Window
 //----------------------------------------------------------------------------------
-CompilerWindow::CompilerWindow() {
+CompilerWindow::CompilerWindow(const char* _title) : EditorWindow(_title) {
     ClearLog();
     memset(InputBuf, 0, sizeof(InputBuf));
     HistoryPos = -1;
@@ -87,6 +87,7 @@ CompilerWindow::~CompilerWindow() {
 
 void CompilerWindow::Setup(Editor* editor_ref) {
     parent = editor_ref;
+    is_open = false;
 }
 
 
@@ -118,6 +119,8 @@ void CompilerWindow::AddLog(const char* fmt, ...) {
 
 
 void CompilerWindow::Draw() {
+    if (!is_open) { return; }
+
     ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
     if (!ImGui::Begin(title, &is_open))
     {
@@ -141,14 +144,27 @@ void CompilerWindow::Draw() {
     ImGui::TextWrapped("Enter 'HELP' for help.");
 
     // TODO: display items starting from the bottom
-
-    if (ImGui::SmallButton("Add Debug Text"))  { AddLog("%d some text", Items.Size); AddLog("some more text"); AddLog("display very important message here!"); }
+    if (ImGui::Button("Compile")) {
+        
+    }
+    if (ImGui::Button("Reload Library")) {
+        // 
+    }
+    if (ImGui::Button("Add Debug Text"))  {
+        AddLog("%d some text", Items.Size);
+        AddLog("some more text");
+        AddLog("display very important message here!"); 
+    }
     ImGui::SameLine();
-    if (ImGui::SmallButton("Add Debug Error")) { AddLog("[error] something went wrong"); }
+    if (ImGui::Button("Add Debug Error")) {
+        AddLog("[error] something went wrong");
+    }
     ImGui::SameLine();
-    if (ImGui::SmallButton("Clear"))           { ClearLog(); }
+    if (ImGui::Button("Clear")) {
+        ClearLog();
+    }
     ImGui::SameLine();
-    bool copy_to_clipboard = ImGui::SmallButton("Copy");
+    bool copy_to_clipboard = ImGui::Button("Copy");
     //static float t = 0.0f; if (ImGui::GetTime() - t > 0.02f) { t = ImGui::GetTime(); AddLog("Spam %f", t); }
 
     ImGui::Separator();

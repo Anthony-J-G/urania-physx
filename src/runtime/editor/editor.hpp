@@ -70,9 +70,10 @@ private:
 
 class EditorWindow {
 
-public:	
+public:
+	EditorWindow(const char* _title) : title(_title) {};
 	virtual ~EditorWindow() {};
-	virtual void Setup(Editor* editor_ref) = 0;
+	virtual void Setup(Editor* _parent) = 0;
 	virtual void Shutdown() = 0;
 	virtual void Draw() = 0;
 	virtual void Update() = 0;
@@ -84,6 +85,7 @@ protected:
 	Rectangle ContentRect = { 0 };
 	RenderTexture ViewTexture;
 	
+	const char* title;
 	bool is_focused = false;
 	bool is_open = false;
 

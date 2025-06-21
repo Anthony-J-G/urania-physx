@@ -8,11 +8,16 @@
 // ** `Dear ImGui` Includes
 #include <imgui.h>
 
+#include "editor.hpp"
 #include "rlImGui.h"
 
 
 // Scene View Window
 //----------------------------------------------------------------------------------
+SceneViewWindow::SceneViewWindow(const char* _title): EditorWindow(_title) {
+}
+
+
 void SceneViewWindow::Setup(Editor* editor_ref) {
 	parent = editor_ref;
 	// parent->CallEngine().GetScene("OscillatingCircle");
@@ -69,7 +74,7 @@ void SceneViewWindow::Draw() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
-	if (ImGui::Begin("3D View", &is_open, ImGuiWindowFlags_NoScrollbar)) {
+	if (ImGui::Begin(title, &is_open, ImGuiWindowFlags_NoScrollbar)) {
 		is_focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
 		// draw the view
 		rlImGuiImageRenderTextureFit(&ViewTexture, true);

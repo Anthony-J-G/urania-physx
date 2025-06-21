@@ -7,11 +7,16 @@
 // ** `Dear ImGui` Includes
 #include <imgui.h>
 
+#include "editor.hpp"
 #include "rlImGui.h"
 
 
 // Image Viewer Window
 //----------------------------------------------------------------------------------
+ImageViewerWindow::ImageViewerWindow(const char* _title) : EditorWindow(_title) {
+}
+
+
 void ImageViewerWindow::Setup(Editor* editor_ref) {
 	Camera.zoom = 1;
 	Camera.target.x = 0;
