@@ -40,6 +40,25 @@ pub fn build(b: *std.Build) void {
     const libraylib = raylib.artifact("raylib");
     // ------------------------------------------------------------
 
+    // Build Editor Library
+    // ------------------------------------------------------------
+    const editor = b.addLibrary(.{
+        .linkage = .static,
+        .name = "editor",
+        .root_module = modules.generateEditorModule(
+            b, target, optimize
+        )
+    });    
+    editor.installHeadersDirectory(
+        b.path("src/editor"), "editor",
+        .{.include_extensions = &.{"hpp", "h"}}
+    );
+
+    // ** Linking
+    editor.linkLibrary(libimgui);
+    editor.linkLibrary(libraylib);
+    // ------------------------------------------------------------
+
     // Build Engine Library
     // ------------------------------------------------------------
     const engine = b.addLibrary(.{
@@ -69,11 +88,12 @@ pub fn build(b: *std.Build) void {
     });
 
     // ** Includes
-    exe.installLibraryHeaders(libraylib);    
+    exe.installLibraryHeaders(libraylib);
 
     // ** Linking
     exe.linkLibrary(libimgui);
     exe.linkLibrary(libraylib);
+    exe.linkLibrary(editor);
     // ------------------------------------------------------------
 
     b.installArtifact(libraylib);
