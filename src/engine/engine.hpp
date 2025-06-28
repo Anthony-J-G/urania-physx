@@ -1,6 +1,27 @@
-#pragma once
+#ifndef ENGINE_H
+#define ENGINE_H
 
-#include "scene.hpp"
+// Includes
+#include "engine/macros.h"
+
+// Export Functions
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
-void InitEngine();
+
+
+void ENGINE_API InitEngine();
+
+
+
+
+
+#ifdef __cplusplus
+}
+#endif
+
+
+
+#endif // ENGINE_H

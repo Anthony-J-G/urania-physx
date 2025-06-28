@@ -63,6 +63,7 @@ pub fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *
             "scenes/euler_fluid_sim_2d.cpp",
         },
     });    
+    module.addCMacro("ENGINE_LIBRARY_EXPORTS", "");
 
     // ** Includes
     module.addIncludePath(b.path("src"));
