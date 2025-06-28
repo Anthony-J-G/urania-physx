@@ -20,7 +20,6 @@ SceneViewWindow::SceneViewWindow(const char* _title): EditorWindow(_title) {
 
 void SceneViewWindow::Setup(Editor* editor_ref) {
 	parent = editor_ref;
-	// parent->CallEngine().GetScene("OscillatingCircle");
 	ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
 	Camera.fovy = 45;

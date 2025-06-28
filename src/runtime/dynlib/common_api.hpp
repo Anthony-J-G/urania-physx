@@ -16,4 +16,4 @@ struct EngineLibrary {
     Scene_API* (*GetScene)(const char*);
     std::vector<const char*> (*GetSceneNames)();
 };
-bool isEngineLoadSuccess(EngineLibrary& api);
+void isEngineLoadSuccess(EngineLibrary& api);

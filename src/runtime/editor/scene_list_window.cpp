@@ -8,6 +8,7 @@
 
 // ** `Dear ImGui` Includes
 #include <imgui.h>
+#include <vector>
 
 
 // Scene List Window
@@ -33,7 +34,10 @@ void SceneListWindow::Update() {
 void SceneListWindow::Draw() {
 	if (!is_open) { return; }
 
-	auto names = parent->CallEngine().GetSceneNames();
+	auto engine_ref = parent->CallEngine();
+	std::vector<const char *> names = {};
+
+	if (engine_ref) { names = engine_ref->GetSceneNames(); }
 	const char** items = names.data();
 	// const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
 
@@ -55,8 +59,9 @@ void SceneListWindow::Draw() {
     ImGui::EndListBox();
 
 	if (names.size() != 0 && ImGui::Button("Load")) {
-		printf("Attempted to load scene: %s\n", items[item_selected_idx]);
-		auto scene = parent->CallEngine().GetScene(items[item_selected_idx]);
+		printf("INFO: [editor] Attempted to load scene: %s\n", items[item_selected_idx]);
+		Scene_API* scene = nullptr;
+		if (engine_ref) { scene = engine_ref->GetScene(items[item_selected_idx]); };
 		if (scene != nullptr) {
 			parent->SetCurrentScene(scene);
 		}

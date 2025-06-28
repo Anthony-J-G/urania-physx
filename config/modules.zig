@@ -65,6 +65,7 @@ pub fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) 
         .flags = &.{},
         .files = &.{
             "main.cpp",
+            "dynlib/common_api.cpp",
             "editor/editor.cpp",
             "editor/image_viewer_window.cpp",
             "editor/scene_list_window.cpp",

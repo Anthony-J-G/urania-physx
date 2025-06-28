@@ -108,8 +108,11 @@ Editor::~Editor() {
 }
 
 
-const EngineLibrary& Editor::CallEngine() {
-	return engine;
+EngineLibrary* Editor::CallEngine() {
+	if (engine.is_loaded) {
+		return &engine;
+	}
+	return nullptr;	
 }
 
 

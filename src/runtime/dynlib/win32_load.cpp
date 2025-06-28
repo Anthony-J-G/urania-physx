@@ -35,7 +35,7 @@ void LoadEngineLibrary(EngineLibrary& api) {
 		api.EngineInit();
 	}
 
-	// isEngineLoadSuccess(api);
+	isEngineLoadSuccess(api);
 	if (!api.is_loaded) {
 		printf("WARNING: [win32] library `" ENGINE_LIB_NAME_OS_WINDOWS "` partial load.\n");
 	} else {
