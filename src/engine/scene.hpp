@@ -26,7 +26,7 @@ ENGINE_API Scene_API* GetScene(const char* key);
 
 
 
-std::vector<const char*> GetSceneNames();
+ENGINE_API std::vector<const char*> GetSceneNames();
 
 
 // TODO(anthony-j-g): Remove legacy scene class to be replaced with Scene_API struct

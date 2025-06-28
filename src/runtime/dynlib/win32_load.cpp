@@ -1,5 +1,6 @@
 #include "win32_load.hpp"
 #include "common_api.hpp"
+#include "engine/scene.hpp"
 
 #include <stdio.h>
 #include <libloaderapi.h>
@@ -22,7 +23,10 @@ void LoadEngineLibrary(EngineLibrary& api) {
 	api.is_loaded = false;
 
 	api.EngineInit 	= (void (*)()) GetProcAddress(g_EngineLibraryHandle,
-		"_Z10InitEnginev"
+		"InitEngine"
+	);
+	api.RegisterScene = (bool (*)(Scene_API*)) GetProcAddress(g_EngineLibraryHandle,
+		"RegisterScene"
 	);
 	api.GetScene  	= (Scene_API* (*)(const char*)) GetProcAddress(g_EngineLibraryHandle,
 		"GetScene"
