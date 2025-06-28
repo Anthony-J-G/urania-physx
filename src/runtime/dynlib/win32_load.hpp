@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "common_dynamic_api.hpp"
+#include "common_api.hpp"
 
 
 

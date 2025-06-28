@@ -78,7 +78,7 @@ pub fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) 
             .language = .cpp,
             .flags = &.{},
             .files = &.{
-                "win32_dynamic_api.cpp",
+                "dynlib/win32_load.cpp",
             },
         });
     }
@@ -127,6 +127,7 @@ pub fn generateImGuiModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *M
     });
 
     // ** Include Paths
+    module.addIncludePath(b.path("src"));
     module.addIncludePath(imgui.path(""));
 
     return module;    

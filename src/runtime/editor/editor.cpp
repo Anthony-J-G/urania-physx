@@ -16,7 +16,7 @@
 
 // ** `win32` Includes
 #if defined(_WIN32) || defined(_WIN64)
-#	include "../win32_dynamic_api.hpp"
+#	include "runtime/dynlib/win32_load.hpp"
 	using namespace win32;
 #else // Win32 or Win64
 // TODO(anthony-j-g): enable this for Linux and OSX

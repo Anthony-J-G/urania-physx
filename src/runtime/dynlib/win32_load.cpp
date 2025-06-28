@@ -1,4 +1,5 @@
-#include "win32_dynamic_api.hpp"
+#include "win32_load.hpp"
+#include "common_api.hpp"
 
 #include <stdio.h>
 #include <libloaderapi.h>
@@ -32,9 +33,6 @@ void LoadEngineLibrary(PhysicsLibrary& api) {
 		api.EngineInit();
 	}
 }
-
-
-
 
 
 } // end namespace win32

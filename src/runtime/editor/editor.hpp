@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../common_dynamic_api.hpp"
+#include "runtime/dynlib/common_api.hpp"
 
-#include <cstddef>
 #include <raylib.h>
 
 #include <stdlib.h>
