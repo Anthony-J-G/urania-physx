@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include <physics/scene.hpp>
+#include <engine/scene.hpp>
 
 
 
@@ -35,7 +35,7 @@ public:
 	void Draw();
 
 	bool ShouldQuit() { return should_quit; }
-	const PhysicsLibrary& CallEngine();
+	const EngineLibrary& CallEngine();
 
 	void SetCurrentScene(Scene_API* new_scene) { 
 		if (new_scene == nullptr) {
@@ -56,7 +56,7 @@ private:
 	void DrawMainMenuBar();
 
 private:
-	PhysicsLibrary engine;
+	EngineLibrary engine;
 	Scene_API* current_scene			= nullptr;
 
 	bool should_quit 					= false;

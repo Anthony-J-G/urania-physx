@@ -108,7 +108,7 @@ Editor::~Editor() {
 }
 
 
-const PhysicsLibrary& Editor::CallEngine() {
+const EngineLibrary& Editor::CallEngine() {
 	return engine;
 }
 

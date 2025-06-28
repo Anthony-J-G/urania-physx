@@ -18,7 +18,7 @@ pub fn generateEditorModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *
 
 
 pub fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    const module_directory = b.path("src/physics/");
+    const module_directory = b.path("src/engine/");
 
     const module = b.createModule(.{
         .target = t,

@@ -7,30 +7,39 @@
 
 namespace win32 {
 
-HMODULE g_PhysicsLibraryHandle;               // Handle to DLL
+HMODULE g_EngineLibraryHandle;               // Handle to DLL
 
 
-void LoadEngineLibrary(PhysicsLibrary& api) {
-	g_PhysicsLibraryHandle = LoadLibrary("physics.dll");
-	if (g_PhysicsLibraryHandle == NULL) {
-		printf("[win32] Error: library `physics.dll` could not be loaded\n");
+void LoadEngineLibrary(EngineLibrary& api) {
+	g_EngineLibraryHandle = LoadLibrary(ENGINE_LIB_NAME_OS_WINDOWS);
+	if (g_EngineLibraryHandle == NULL) {
+		printf("ERROR: [win32] library `" ENGINE_LIB_NAME_OS_WINDOWS "` could not be loaded\n");
 		return;
+	} else {
+		printf("INFO: [win32] library `" ENGINE_LIB_NAME_OS_WINDOWS "` found by application. Attempting load.\n");
 	}
 
-	api.is_loaded = true; // Assume true, and set false if a procedure fails to load
+	api.is_loaded = false;
 
-	api.EngineInit 	= (void (*)()) GetProcAddress(g_PhysicsLibraryHandle,
+	api.EngineInit 	= (void (*)()) GetProcAddress(g_EngineLibraryHandle,
 		"_Z10InitEnginev"
 	);
-	api.GetScene  	= (Scene_API* (*)(const char*)) GetProcAddress(g_PhysicsLibraryHandle,
+	api.GetScene  	= (Scene_API* (*)(const char*)) GetProcAddress(g_EngineLibraryHandle,
 		"GetScene"
 	);
-	api.GetSceneNames  	= (std::vector<const char*> (*)()) GetProcAddress(g_PhysicsLibraryHandle,
+	api.GetSceneNames  	= (std::vector<const char*> (*)()) GetProcAddress(g_EngineLibraryHandle,
 		"_Z13GetSceneNamesv"
 	);
 
 	if (api.EngineInit != nullptr) {
 		api.EngineInit();
+	}
+
+	// isEngineLoadSuccess(api);
+	if (!api.is_loaded) {
+		printf("WARNING: [win32] library `" ENGINE_LIB_NAME_OS_WINDOWS "` partial load.\n");
+	} else {
+		printf("INFO: [win32] library `" ENGINE_LIB_NAME_OS_WINDOWS "` loaded successfully.\n");
 	}
 }
 

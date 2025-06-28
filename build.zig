@@ -44,13 +44,13 @@ pub fn build(b: *std.Build) void {
     // ------------------------------------------------------------
     const engine = b.addLibrary(.{
         .linkage = .dynamic,
-        .name = "physics",
+        .name = "engine",
         .root_module = modules.generateEngineModule(
             b, target, optimize
         )
     });    
     engine.installHeadersDirectory(
-        b.path("src/physics"), "physics",
+        b.path("src/engine"), "engine",
         .{.include_extensions = &.{"hpp", "h"}}
     );
 

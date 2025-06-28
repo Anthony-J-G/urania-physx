@@ -1,9 +1,11 @@
 #pragma once
 
-#include <physics/scene.hpp>
+#include <engine/scene.hpp>
 
 
-struct PhysicsLibrary {
+#define ENGINE_LIB_NAME "engine"
+
+struct EngineLibrary {
     bool is_loaded;
     
     // Engine Functions
@@ -14,3 +16,4 @@ struct PhysicsLibrary {
     Scene_API* (*GetScene)(const char*);
     std::vector<const char*> (*GetSceneNames)();
 };
+bool isEngineLoadSuccess(EngineLibrary& api);
