@@ -5,9 +5,10 @@
 
 
 class SceneListWindow : public EditorWindow {
-
+	friend Editor;
 public:
-	void Setup(Editor* editor_ref) override;
+	SceneListWindow(const char* _title);
+	void Setup(Editor* _parent) override;
 	void Shutdown() override;
 	void Update() override;
 	void Draw() override;

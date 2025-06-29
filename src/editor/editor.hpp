@@ -1,15 +1,14 @@
 #pragma once
 
-#include "../common_dynamic_api.hpp"
+#include "runtime/dynlib/common_api.hpp"
 
-#include <cstddef>
 #include <raylib.h>
 
 #include <stdlib.h>
 
 #include <vector>
 
-#include <physics/scene.hpp>
+#include <engine/scene.hpp>
 
 
 
@@ -35,8 +34,8 @@ public:
 	void Update();
 	void Draw();
 
-	bool ShouldQuit() { return should_quit; }
-	const PhysicsLibrary& CallEngine();
+	bool ShouldQuit() { return should_quit; }	
+	EngineApi* CallEngine();
 
 	void SetCurrentScene(Scene_API* new_scene) { 
 		if (new_scene == nullptr) {
@@ -57,7 +56,7 @@ private:
 	void DrawMainMenuBar();
 
 private:
-	PhysicsLibrary engine;
+	EngineLibrary engine;
 	Scene_API* current_scene			= nullptr;
 
 	bool should_quit 					= false;
@@ -70,9 +69,10 @@ private:
 
 class EditorWindow {
 
-public:	
+public:
+	EditorWindow(const char* _title) : title(_title) {};
 	virtual ~EditorWindow() {};
-	virtual void Setup(Editor* editor_ref) = 0;
+	virtual void Setup(Editor* _parent) = 0;
 	virtual void Shutdown() = 0;
 	virtual void Draw() = 0;
 	virtual void Update() = 0;
@@ -84,6 +84,7 @@ protected:
 	Rectangle ContentRect = { 0 };
 	RenderTexture ViewTexture;
 	
+	const char* title;
 	bool is_focused = false;
 	bool is_open = false;
 

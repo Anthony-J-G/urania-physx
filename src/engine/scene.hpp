@@ -1,9 +1,10 @@
 #pragma once
 
+#include "engine/macros.h"
 #include <vector>
 
 #ifdef __cplusplus
-    extern "C" {
+extern "C" {
 #endif
 
 //! main structure for clients to use for interfacing with the engine. 
@@ -16,16 +17,16 @@ struct Scene_API {
 };
 
 
-bool RegisterScene(Scene_API(*fn)(void));
-Scene_API* GetScene(const char* key);
+ENGINE_API bool RegisterScene(Scene_API(*fn)(void));
+ENGINE_API Scene_API* GetScene(const char* key);
 
 #ifdef __cplusplus
-     }
+}
 #endif
 
 
 
-std::vector<const char*> GetSceneNames();
+ENGINE_API std::vector<const char*> GetSceneNames();
 
 
 // TODO(anthony-j-g): Remove legacy scene class to be replaced with Scene_API struct

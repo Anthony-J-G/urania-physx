@@ -1,136 +1,107 @@
 const std = @import("std");
+const Module = std.Build.Module;
+const ResolvedTarget = std.Build.ResolvedTarget;
+const OptimizeMode = std.builtin.OptimizeMode;
+
+const reload = @import("config/reload.zig").reload;
+const modules = @import("config/modules.zig");
 
 const ccpputilz = @import("ccpputilz");
 const compile_commands = ccpputilz.compile_commands;
 
+const tests = @import("tests/tests.zig");
+
 
 pub fn build(b: *std.Build) void {
+    if (
+        b.option(bool, "recompile-from-engine", "for internal use by the engine only") orelse false
+    ) {
+        reload(b);
+        return;
+    }
+
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
     // Build ImGui Static Library
     // ------------------------------------------------------------
-    const imgui = b.dependency("imgui", .{});
     const libimgui = b.addLibrary(.{
         .linkage = .static,
         .name = "imgui",
-        .root_module = b.createModule(.{
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-            .link_libcpp = true,
-        }),
+        .root_module = modules.generateImGuiModule(
+            b, target, optimize
+        ),
     });
-    libimgui.addCSourceFiles(.{
-        .root = imgui.path(""),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "imgui.cpp",
-            "imgui_demo.cpp",
-            "imgui_draw.cpp",
-            "imgui_tables.cpp",
-            "imgui_widgets.cpp",
-        },
-    });
-    libimgui.installHeadersDirectory(imgui.path(""), "", .{.include_extensions = &.{"hpp", "h"}});
     // ------------------------------------------------------------
 
+    // Build Raylib Shared Library
+    // ------------------------------------------------------------
     const raylib = b.dependency("raylib", .{.shared=true});
     const libraylib = raylib.artifact("raylib");
-    b.installArtifact(libraylib);
+    // ------------------------------------------------------------
 
-    const rl_imgui = b.dependency("rlimgui", .{});
-
-    const lib = b.addLibrary(.{
-        .linkage = .dynamic,
-        .name = "physics",
-        .root_module = b.createModule(.{
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-            .link_libcpp = true,
-        }),
-    });
-    // ** Sources
-    lib.addCSourceFiles(.{
-        .root = b.path("src/physics"),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "engine.cpp",
-            "scene.cpp",
-            "scenes/sample.cpp",
-            "scenes/fluid_sim.cpp",
-        },
+    // Build Editor Library
+    // ------------------------------------------------------------
+    const editor = b.addLibrary(.{
+        .linkage = .static,
+        .name = "editor",
+        .root_module = modules.generateEditorModule(
+            b, target, optimize
+        )
     });    
-
-    // ** Includes
-    lib.addIncludePath(b.path("src/physics"));
-    lib.addIncludePath(b.path("zig-out/include"));
-    lib.installLibraryHeaders(libraylib);
-    lib.installHeadersDirectory(b.path("src/physics"), "physics", .{.include_extensions = &.{"hpp", "h"}});
+    editor.installHeadersDirectory(
+        b.path("src/editor"), "editor",
+        .{.include_extensions = &.{"hpp", "h"}}
+    );
 
     // ** Linking
-    lib.linkLibrary(libraylib);
-    lib.linkLibrary(libimgui);
+    editor.linkLibrary(libimgui);
+    editor.linkLibrary(libraylib);
+    // ------------------------------------------------------------
 
-    b.installArtifact(lib);
+    // Build Engine Library
+    // ------------------------------------------------------------
+    const engine = b.addLibrary(.{
+        .linkage = .dynamic,
+        .name = "engine",
+        .root_module = modules.generateEngineModule(
+            b, target, optimize
+        )
+    });    
+    engine.installHeadersDirectory(
+        b.path("src/engine"), "engine",
+        .{.include_extensions = &.{"hpp", "h"}}
+    );
 
+    // ** Linking
+    engine.linkLibrary(libraylib);
+    engine.linkLibrary(libimgui);    
+    // ------------------------------------------------------------
+
+    // Build Runtime Executable
+    // ------------------------------------------------------------
     const exe = b.addExecutable(.{
         .name = "runtime",
-        .root_module = b.createModule(.{
-            .target = target,
-            .optimize = optimize,
-            .link_libc = true,
-        }),
-    });
-    // ** Sources
-    exe.addCSourceFiles(.{
-        .root = b.path("src/runtime"),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "main.cpp",
-            "editor/editor.cpp",
-            "editor/image_viewer_window.cpp",
-            "editor/scene_list_window.cpp",
-            "editor/scene_view_window.cpp",
-        },
-    });
-    if (target.result.os.tag == .windows) {
-        exe.addCSourceFiles(.{
-            .root = b.path("src/runtime"),
-            .language = .cpp,
-            .flags = &.{},
-            .files = &.{
-                "win32_dynamic_api.cpp",
-            },
-        });
-    }
-    exe.addCSourceFiles(.{
-        .root = rl_imgui.path(""),
-        .language = .cpp,
-        .flags = &.{},
-        .files = &.{
-            "rlImGui.cpp",
-        },
+        .root_module = modules.generateRuntimeModule(
+            b, target, optimize
+        )
     });
 
     // ** Includes
     exe.installLibraryHeaders(libraylib);
-    exe.addIncludePath(b.path("zig-out/include"));
-    exe.addIncludePath(imgui.path(""));
-    exe.addIncludePath(rl_imgui.path(""));
 
     // ** Linking
     exe.linkLibrary(libimgui);
     exe.linkLibrary(libraylib);
+    exe.linkLibrary(editor);
+    // ------------------------------------------------------------
 
+    b.installArtifact(libraylib);
+    b.installArtifact(engine);
     b.installArtifact(exe);
 
     try compile_commands.generateCompileCommands(b, &.{
-        lib,
+        engine,
         exe,
     });
 }

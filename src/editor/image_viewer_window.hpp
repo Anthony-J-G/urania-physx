@@ -8,7 +8,8 @@
 class ImageViewerWindow : public EditorWindow {
 
 public:
-	void Setup(Editor* editor_ref) override;
+	ImageViewerWindow(const char* _title);
+	void Setup(Editor* _parent) override;
 	void Shutdown() override;
 	void Draw() override;
 	void Update() override;
