@@ -5,10 +5,12 @@
 
 #define ENGINE_LIB_NAME "engine"
 
+enum class EngineFunctions {
+    EngineInit,
+    GetScene,
+};
 
-struct EngineLibrary {
-    bool is_loaded;
-    
+struct EngineApi {
     // Engine Functions
     void (*EngineInit)();
 
@@ -17,4 +19,12 @@ struct EngineLibrary {
     Scene_API* (*GetScene)(const char*);
     std::vector<const char*> (*GetSceneNames)();
 };
-void isEngineLoadSuccess(EngineLibrary& api);
+#define ENGINE_API_SIZE sizeof(EngineApi) / sizeof(void*)
+
+struct EngineLibrary {
+    void*       handle = nullptr;
+    bool        is_fully_loaded = false;
+    EngineApi   api;
+};
+void isEngineLoadSuccess(EngineLibrary& lib);
+bool DidLoadSucceed(int funcc, const void* funcv[]);

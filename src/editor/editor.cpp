@@ -108,9 +108,9 @@ Editor::~Editor() {
 }
 
 
-EngineLibrary* Editor::CallEngine() {
-	if (engine.is_loaded) {
-		return &engine;
+EngineApi* Editor::CallEngine() {
+	if (engine.is_fully_loaded) {
+		return &engine.api;
 	}
 	return nullptr;	
 }

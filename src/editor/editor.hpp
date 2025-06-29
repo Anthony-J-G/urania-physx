@@ -35,7 +35,7 @@ public:
 	void Draw();
 
 	bool ShouldQuit() { return should_quit; }	
-	EngineLibrary* CallEngine();
+	EngineApi* CallEngine();
 
 	void SetCurrentScene(Scene_API* new_scene) { 
 		if (new_scene == nullptr) {
