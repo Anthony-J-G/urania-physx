@@ -19,7 +19,8 @@ documentation for details.
    :caption: Contents:
 
    administration/index
-   engine/index
    runtime/index
+   editor/index
+   engine/index   
    simulations/index
 

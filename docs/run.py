@@ -4,12 +4,17 @@ import os
 from pathlib import Path
 import shutil
 
+repo_name = "fluid-simulations"
+
 
 def main(env):
     command = []
 
     # Ensure proper working directory
-    cwd = Path(os.getcwd())    
+    cwd = Path(os.getcwd())
+    if cwd.stem == repo_name and ".git" in os.listdir(cwd):
+        os.chdir(cwd.joinpath("docs"))
+    cwd = Path(os.getcwd())
     if cwd.stem != "docs": 
         # Potentially if you call this from some other folder `docs` this will break, but at that point,
         # if you fuck up that badly it's your own fault.
