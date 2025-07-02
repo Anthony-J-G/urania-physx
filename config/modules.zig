@@ -1,16 +1,22 @@
-const std = @import("std");
-const Module = std.Build.Module;
-const ResolvedTarget = std.Build.ResolvedTarget;
-const OptimizeMode = std.builtin.OptimizeMode;
+// stdlib imports
+const std               = @import("std");
+const Module            = std.Build.Module;
+const ResolvedTarget    = std.Build.ResolvedTarget;
+const OptimizeMode      = std.builtin.OptimizeMode;
+
+// buildsystem imports
+const Options = @import("options.zig").Options;
 
 
 
-pub fn generateEditorModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
+pub fn generateEditorModule(b: *std.Build, opts: Options) *Module {
+    // ** Dependencies
     const rl_imgui = b.dependency("rlimgui", .{});
+    const imgui = b.dependency("imgui", .{});
 
     const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
+        .target = opts.target,
+        .optimize = opts.optimize,
         .link_libc = true,
         .link_libcpp = true,
     });
@@ -35,18 +41,20 @@ pub fn generateEditorModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *
         },
     });
 
+    module.addIncludePath(b.path("src"));
     module.addIncludePath(rl_imgui.path(""));
+    module.addIncludePath(imgui.path(""));
     
     return module;
 }
 
 
-pub fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
+pub fn generateEngineModule(b: *std.Build, opts: Options) *Module {
     const module_directory = b.path("src/engine/");
 
     const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
+        .target = opts.target,
+        .optimize = opts.optimize,
         .link_libc = true,
         .link_libcpp = true,
     });
@@ -73,13 +81,13 @@ pub fn generateEngineModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *
 }
 
 
-pub fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
-    // ** Dependencies
-    
+pub fn generateRuntimeModule(b: *std.Build, opts: Options) *Module {
+    const rl_imgui = b.dependency("rlimgui", .{});
+    const imgui = b.dependency("imgui", .{});
 
     const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
+        .target = opts.target,
+        .optimize = opts.optimize,
         .link_libc = true,
         .link_libcpp = true,
     });
@@ -88,12 +96,11 @@ pub fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) 
         .root = b.path("src/runtime"),
         .language = .cpp,
         .flags = &.{},
-        .files = &.{
-            "main.cpp",
+        .files = &.{            
             "dynlib/common_api.cpp",            
         },
     });
-    if (t.result.os.tag == .windows) {
+    if (opts.target.result.os.tag == .windows) {
         module.addCSourceFiles(.{
             .root = b.path("src/runtime"),
             .language = .cpp,
@@ -108,18 +115,20 @@ pub fn generateRuntimeModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) 
     module.addIncludePath(b.path("src"));
     module.addIncludePath(b.path("src/runtime/"));    
     module.addIncludePath(b.path("zig-out/include"));
+    module.addIncludePath(imgui.path(""));
+    module.addIncludePath(rl_imgui.path(""));
 
     return module;
 }
 
 
-pub fn generateImGuiModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
+pub fn generateImGuiModule(b: *std.Build, opts: Options) *Module {
     // ** Dependencies
     const imgui = b.dependency("imgui", .{});
 
     const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
+        .target = opts.target,
+        .optimize = opts.optimize,
         .link_libc = true,
         .link_libcpp = false,
     });
@@ -146,10 +155,10 @@ pub fn generateImGuiModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *M
 }
 
 
-pub fn generateCommonModule(b: *std.Build, t: ResolvedTarget, o: OptimizeMode) *Module {
+pub fn generateCommonModule(b: *std.Build, opts: Options) *Module {
     const module = b.createModule(.{
-        .target = t,
-        .optimize = o,
+        .target = opts.target,
+        .optimize = opts.optimize,
         .link_libc = true,
         .link_libcpp = false,
     });

@@ -40,10 +40,6 @@
             .url = "git+https://github.com/raysan5/raylib.git#59bcf680aafb6f054e150f70c8c71deb44ad04b1",
             .hash = "raylib-5.5.0-whq8uB05NgRNqHhxfYQ5qz60yFcpFeERE0adE0KW7jvM",
         },
-        .ccpputilz = .{
-            .url = "git+https://github.com/anthony-j-g/ccpputilz?ref=dev#cf1ae84b29a89b23cae2ed2a7c9a9a4832ea402c",
-            .hash = "ccpputilz-0.1.0-AAAAAFF_AADf4ujCpr6UeSFWgwVXWGVPCHAPwYE8Q26Y",
-        },
         .rlimgui = .{
             .url = "git+https://github.com/raylib-extras/rlImGui.git#9512b36b8cb563274138ec10d82568a51e40d812",
             .hash = "N-V-__8AAA7QXgBHKeBNgVmXOAAx8hjTqKwDN1hKLuRmnUtu",
@@ -51,6 +47,14 @@
         .imgui = .{
             .url = "git+https://github.com/ocornut/imgui?ref=docking#eaac68ca2ce404137d7a1e7d8f74fafbfe30f508",
             .hash = "N-V-__8AANPydAAhybdIvsA24HuamZUXD_EE6YEYVdWcjdoH",
+        },
+        .googletest = .{
+            .url = "git+https://github.com/google/googletest.git#c67de117379f4d1c889c7581a0a76aa0979c2083",
+            .hash = "N-V-__8AANihPgDd6YX1a2KKE4o6_YksHv0eRVJvde7dpE9_",
+        },
+        .ccpputilz = .{
+            .url = "git+https://github.com/anthony-j-g/ccpputilz.git#351f44275da5285a4a7a16b09482c0e28aefac5e",
+            .hash = "ccpputilz-0.1.0-p-OTsQ_fAABdAaaD9HuaL25YKpbyLulCu9B8JChjWGxM",
         },
     },
     .paths = .{

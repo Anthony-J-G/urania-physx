@@ -1,11 +1,11 @@
+//!
+
 const std = @import("std");
 
 const modules = @import("modules.zig");
+const Options = @import("options.zig").Options;
 
-
-pub fn reload(b: *std.Build) void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
+pub fn reload(b: *std.Build, opts: Options) void {
 
     // Build Engine Library
     // ------------------------------------------------------------
@@ -13,7 +13,7 @@ pub fn reload(b: *std.Build) void {
         .linkage = .dynamic,
         .name = "physics",
         .root_module = modules.generateEngineModule(
-            b, target, optimize
+            b, opts
         )
     });    
     engine.installHeadersDirectory(

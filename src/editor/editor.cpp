@@ -1,7 +1,7 @@
 #include "editor.hpp"
 
 // ** `raylib` Includes
-#include <cstddef>
+#include <stddef.h>
 #include <raylib.h>
 #include <raymath.h>
 
@@ -13,15 +13,6 @@
 #include "scene_list_window.hpp"
 #include "scene_view_window.hpp"
 #include "image_viewer_window.hpp"
-
-// ** `win32` Includes
-#if defined(_WIN32) || defined(_WIN64)
-#	include "runtime/dynlib/win32_load.hpp"
-	using namespace win32;
-#else // Win32 or Win64
-// TODO(anthony-j-g): enable this for Linux and OSX
-#	error "Dynamic reloading not supported in OS other than Windows!"
-#endif
 
 
 // Editor Window Enumeration
