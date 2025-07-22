@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
 	// Main game loop
 	while (!WindowShouldClose() && !editor.ShouldQuit()) { // Detect window close button or ESC key
 		// Update Step
-        	//----------------------------------------------------------------------------------
+        //----------------------------------------------------------------------------------
 		float deltatime = GetFrameTime();
 		editor.Update();
 		// current_scene.Update(deltatime);

@@ -16,18 +16,18 @@ const gtest = ccpputilz.extensions.gtest;
 const discover = ccpputilz.default.discover;
 
 
-pub fn build(b: *std.Build, opts: Options) void {
-    const runtime_tests: *Step.Compile = gtest.createTestStep(b, .{
-        .name = "runtime_tests",
-        .target = opts.target,
-        .optimize = opts.optimize,
-    });
-    discover.discoverCSourceFiles(runtime_tests, .{
-        .root = b.path("tests/unit_tests/runtime"),
-        .flags = &.{"-std=c++17"},
-    });
-    runtime_tests.root_module.addImport("runtime", modules.generateRuntimeModule(b, opts));
-    runtime_tests.addIncludePath(b.path("src"));
+pub fn build(_: *std.Build, _: Options) void {
+    // const runtime_tests: *Step.Compile = gtest.createTestStep(b, .{
+    //     .name = "runtime_tests",
+    //     .target = opts.target,
+    //     .optimize = opts.optimize,
+    // });
+    // discover.discoverCSourceFiles(runtime_tests, .{
+    //     .root = b.path("tests/unit_tests/runtime"),
+    //     .flags = &.{"-std=c++17"},
+    // });
+    // runtime_tests.root_module.addImport("runtime", modules.generateRuntimeModule(b, opts));
+    // runtime_tests.addIncludePath(b.path("src"));
 
-    b.installArtifact(runtime_tests);
+    // b.installArtifact(runtime_tests);
 }

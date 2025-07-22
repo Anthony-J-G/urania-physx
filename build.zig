@@ -5,7 +5,7 @@ const ResolvedTarget = std.Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 
 // config imports
-const reload = @import("config/reload.zig").reload;
+const reload = @import("config/reload.zig");
 const modules = @import("config/modules.zig");
 const options = @import("config/options.zig");
 const Options = options.Options;
@@ -20,9 +20,9 @@ pub fn build(b: *std.Build) void {
     const build_options = options.default(b);
 
     if (build_options.engine_is_packaged) {
-        reload(b, build_options);
+        reload.reload(b, build_options);
         return;
-    }    
+    }
 
     // Build ImGui Static Library
     // ------------------------------------------------------------
@@ -62,11 +62,11 @@ pub fn build(b: *std.Build) void {
     // Build Runtime Executable
     // ------------------------------------------------------------
     const exe = b.addExecutable(.{ .name = "runtime", .root_module = modules.generateRuntimeModule(b, build_options) });
-    exe.addCSourceFile(.{
-        .file = b.path("src/runtime/main.cpp"),
-        .language = .cpp,
-        .flags = &.{}
-    });
+    // exe.addCSourceFile(.{
+    //     .file = b.path("src/runtime/main.cpp"),
+    //     .language = .cpp,
+    //     .flags = &.{}
+    // });
 
     // ** Includes
     exe.installLibraryHeaders(libraylib);

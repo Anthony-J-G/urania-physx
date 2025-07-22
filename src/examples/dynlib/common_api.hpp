@@ -22,13 +22,6 @@
 #endif
 
 
-const void* test[] = {
-    {"InitEngine"},
-    {"RegisterScene"},
-    {"GetScene"},
-    {"_Z13GetSceneNamesv"},
-};
-
 
 struct EngineApi {
     // Engine Functions

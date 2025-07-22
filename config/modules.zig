@@ -86,6 +86,7 @@ pub fn generateRuntimeModule(b: *std.Build, opts: Options) *Module {
     const imgui = b.dependency("imgui", .{});
 
     const module = b.createModule(.{
+        .root_source_file = b.path("src/runtime/main.zig"),
         .target = opts.target,
         .optimize = opts.optimize,
         .link_libc = true,
@@ -97,19 +98,19 @@ pub fn generateRuntimeModule(b: *std.Build, opts: Options) *Module {
         .language = .cpp,
         .flags = &.{},
         .files = &.{            
-            "dynlib/common_api.cpp",            
+            "backend.cpp",
         },
     });
-    if (opts.target.result.os.tag == .windows) {
-        module.addCSourceFiles(.{
-            .root = b.path("src/runtime"),
-            .language = .cpp,
-            .flags = &.{},
-            .files = &.{
-                "dynlib/win32_load.cpp",
-            },
-        });
-    }    
+    // if (opts.target.result.os.tag == .windows) {
+    //     module.addCSourceFiles(.{
+    //         .root = b.path("src/runtime"),
+    //         .language = .cpp,
+    //         .flags = &.{},
+    //         .files = &.{
+    //             "dynlib/win32_load.cpp",
+    //         },
+    //     });
+    // }    
 
     // ** Include Paths
     module.addIncludePath(b.path("src"));

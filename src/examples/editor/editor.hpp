@@ -1,7 +1,5 @@
 #pragma once
 
-#include "runtime/dynlib/common_api.hpp"
-
 #include <raylib.h>
 
 #include <stdlib.h>
@@ -35,7 +33,9 @@ public:
 	void Draw();
 
 	bool ShouldQuit() { return should_quit; }	
-	EngineApi* CallEngine();
+
+	// void SetEngineRef(EngineLibrary *engine_ptr);
+	// EngineApi* CallEngine();
 
 	void SetCurrentScene(Scene_API* new_scene) { 
 		if (new_scene == nullptr) {
@@ -56,7 +56,7 @@ private:
 	void DrawMainMenuBar();
 
 private:
-	EngineLibrary engine;
+	// EngineLibrary* engine				= nullptr;
 	Scene_API* current_scene			= nullptr;
 
 	bool should_quit 					= false;
