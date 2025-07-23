@@ -7,9 +7,10 @@
 
 // ** `Dear ImGui` Includes
 #include <imgui.h>
+#include <rlImGui.h>
 
 #include "editor.hpp"
-#include "rlImGui.h"
+
 
 
 // Scene View Window
@@ -50,31 +51,42 @@ void SceneViewWindow::Update() {
 	if (IsWindowResized()) {
 		UnloadRenderTexture(ViewTexture);
 		ViewTexture = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-	}
-
-	if (is_focused && parent->GetCurrentScene() != nullptr) {
-		parent->GetCurrentScene()->update_fn(GetFrameTime());
-	}
-
-	BeginTextureMode(ViewTexture);
-	ClearBackground(SKYBLUE);
-	
-	if (parent->GetCurrentScene() != nullptr) {
-		parent->GetCurrentScene()->render_fn();
-	}
-
-	EndTextureMode();
+	}	
 }
 
 
 void SceneViewWindow::Draw() {
 	if (!is_open) { return; }
+
+	BeginTextureMode(ViewTexture);
+	
+	// TODO(anthony-j-g): add scene drawing here;
+
+	ClearBackground(SKYBLUE);
+	DrawCircle(0, 0, 200.0, RED);
+
+	if (true) {
+		// s2Statistics s = s2World_GetStatistics(m_worldId);
+		
+		DrawText("Congrats! You created your first window!", 190, 200, 20, LIGHTGRAY);
+		// g_draw.DrawString(5, settings.textLine, "bodies/contacts/joints = %d/%d/%d", s.bodyCount, s.contactCount, s.jointCount);
+		// settings.textLine += settings.textIncrement;
+
+		// g_draw.DrawString(5, settings.textLine, "proxies/height = %d/%d", s.proxyCount, s.treeHeight);
+		// settings.textLine += settings.textIncrement;
+ 
+ 		// g_draw.DrawString(5, settings.textLine, "stack allocator capacity/used = %d/%d", s.stackCapacity, s.stackUsed);
+		// settings.textLine += settings.textIncrement;
+	}
+
+	EndTextureMode();
 		
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::SetNextWindowSizeConstraints(ImVec2(ScaleToDPI(400.0f), ScaleToDPI(400.0f)), ImVec2((float)GetScreenWidth(), (float)GetScreenHeight()));
 
 	if (ImGui::Begin(title, &is_open, ImGuiWindowFlags_NoScrollbar)) {
 		is_focused = ImGui::IsWindowFocused(ImGuiFocusedFlags_ChildWindows);
+
 		// draw the view
 		rlImGuiImageRenderTextureFit(&ViewTexture, true);
 	}

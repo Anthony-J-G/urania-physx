@@ -4,9 +4,7 @@
 
 #include <stdlib.h>
 
-#include <vector>
-
-#include <engine/scene.hpp>
+#include "examples/scenes/scene.hpp"
 
 
 
@@ -32,43 +30,31 @@ public:
 	void Update();
 	void Draw();
 
-	bool ShouldQuit() { return should_quit; }	
+	bool ShouldQuit() { return should_quit; }
 
-	// void SetEngineRef(EngineLibrary *engine_ptr);
-	// EngineApi* CallEngine();
-
-	void SetCurrentScene(Scene_API* new_scene) { 
-		if (new_scene == nullptr) {
+	int GetSceneSelection() { return scene_selection; }
+	void SetSceneSelection(int new_scene) {
+		if (g_sceneCount <= new_scene || new_scene < 0) {
 			return;
 		}
-		if (current_scene != nullptr && current_scene->shutdown_fn != nullptr) {
-			current_scene->shutdown_fn();
-		}
-		
-		current_scene = new_scene;
-		if (current_scene->initialize_fn) {
-			current_scene->initialize_fn();
-		}		
-	} 
-	Scene_API* GetCurrentScene() { return current_scene; }
+		scene_selection = new_scene;
+	}
 
 private:
 	void DrawMainMenuBar();
 
-private:
-	// EngineLibrary* engine				= nullptr;
-	Scene_API* current_scene			= nullptr;
-
+private:	
+	int scene_selection					= 0;
 	bool should_quit 					= false;
 	bool show_imgui_demo 				= false;
 
-	std::vector<EditorWindow *> editor_windows;
-	static const size_t window_count 	= 3;
+	EditorWindow** editor_windows 		= nullptr;
+	size_t window_count 				= 3;
 };
 
 
 class EditorWindow {
-
+	friend Editor;
 public:
 	EditorWindow(const char* _title) : title(_title) {};
 	virtual ~EditorWindow() {};
@@ -80,10 +66,7 @@ public:
 	bool IsOpen() { return is_open; }
 	void ToggleOpen() { is_open = !is_open; }
 
-protected:	
-	Rectangle ContentRect = { 0 };
-	RenderTexture ViewTexture;
-	
+protected:
 	const char* title;
 	bool is_focused = false;
 	bool is_open = false;

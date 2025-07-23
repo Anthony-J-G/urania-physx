@@ -1,18 +1,24 @@
 #include "editor.hpp"
 
-// ** `raylib` Includes
+// ** `stdlib` includes
+#include <stdlib.h>
+#include <string.h>
 #include <stddef.h>
+#include <stdio.h>
+
+// ** `raylib` Includes
 #include <raylib.h>
 #include <raymath.h>
 
 // ** `Dear ImGui` Includes
 #include <imgui.h>
+#include <imgui_impl_raylib.h>
 
 // ** Editor Windows
-#include "compiler_window.hpp"
-#include "scene_list_window.hpp"
+#include "control_window.hpp"
 #include "scene_view_window.hpp"
-#include "image_viewer_window.hpp"
+#include "scene_list_window.hpp"
+
 
 
 // Editor Window Enumeration
@@ -45,8 +51,8 @@ Editor::Editor() {
 
 
 void Editor::Update() {
-	for (EditorWindow* window : editor_windows) {
-		window->Update();
+	for (size_t i = 0; i < window_count; i++) {
+		editor_windows[i]->Update();
 	}
 }
 
@@ -54,8 +60,8 @@ void Editor::Update() {
 void Editor::Draw() {
 	DrawMainMenuBar();
 
-	for (EditorWindow* window : editor_windows) {
-		window->Draw();
+	for (size_t i = 0; i < window_count; i++) {		
+		editor_windows[i]->Draw();
 	}
 
 	if (show_imgui_demo) {
@@ -65,45 +71,42 @@ void Editor::Draw() {
 
 
 void Editor::Initialize() {
-	// Load Dynamic APIs
-	LoadEngineLibrary(engine);
+    EditorWindow* windows[] = {
+        dynamic_cast<EditorWindow *>(new SceneViewWindow("Viewport")),
+		dynamic_cast<EditorWindow *>(new SceneListWindow("Scene List")),
+		dynamic_cast<EditorWindow *>(new ControlsWindow("Controls")),
+    };
+	window_count = sizeof(windows) / sizeof(EditorWindow *);
+	
+	editor_windows = static_cast<EditorWindow **>(malloc(sizeof(windows)));
+	memset(editor_windows, 0, window_count);
 
-	auto image_viewer_window	= new ImageViewerWindow("Image Viewer");
-	auto scene_view_window		= new SceneViewWindow("Viewport");
-	auto scene_list_window		= new SceneListWindow("Scene List");
-	auto compiler_window			= new CompilerWindow("Compiler");
+	for (size_t i = 0; i < window_count; i++) {
+		editor_windows[i] = windows[i];
+		if (editor_windows[i] == nullptr) {
+			Shutdown();
+			printf("panic");
+			exit(1);
+		}
 
-	editor_windows.reserve(4);
-	editor_windows.push_back(static_cast<EditorWindow *>(image_viewer_window));
-	editor_windows.push_back(static_cast<EditorWindow *>(scene_view_window));
-	editor_windows.push_back(static_cast<EditorWindow *>(scene_list_window));
-	editor_windows.push_back(static_cast<EditorWindow *>(compiler_window));
-
-	for (EditorWindow* window: editor_windows) {
-		window->Setup(this);
+	    editor_windows[i]->Setup(this);
 	}
+
+	ImGui_ImplRaylib_Init();
 }
 
 
 void Editor::Shutdown() {
-	for (EditorWindow* window : editor_windows) {
-		delete window;
+	for (size_t i = 0; i < window_count; i++) {
+		delete editor_windows[i];
 	}
-	editor_windows.clear();
+	free(editor_windows);
 }
 
 
 Editor::~Editor() {
 	// Ensure resources are cleaned up on destruction
 	Shutdown();
-}
-
-
-EngineApi* Editor::CallEngine() {
-	if (engine.is_fully_loaded) {
-		return &engine.api;
-	}
-	return nullptr;	
 }
 
 
@@ -158,12 +161,10 @@ void Editor::DrawMainMenuBar() {
 		if (ImGui::BeginMenu("View")) {
 			ImGui::MenuItem("ImGui Demo", nullptr, &show_imgui_demo);
 			ImGui::Separator();
-			ImGui::MenuItem("Image Viewer", nullptr, &static_cast<SceneViewWindow*>(editor_windows[EDITOR_IMAGE_VIEWER])->is_open);
-			ImGui::MenuItem("Scene List", nullptr, &static_cast<SceneListWindow*>(editor_windows[EDITOR_SCENE_LIST])->is_open);
-			ImGui::MenuItem("Viewport", nullptr, &static_cast<SceneViewWindow*>(editor_windows[EDITOR_SCENE_VIEWER])->is_open);
-			ImGui::Separator();
-			ImGui::MenuItem("Compiler", nullptr, &static_cast<CompilerWindow*>(editor_windows[EDITOR_COMPILER])->is_open);
-
+            for (size_t i = 0; i < window_count; i++) {
+				auto window = editor_windows[i];
+            	ImGui::MenuItem(window->title, nullptr, &window->is_open);
+            }
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Scene")) {

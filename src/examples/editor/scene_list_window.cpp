@@ -1,6 +1,8 @@
 #include "scene_list_window.hpp"
-#include "editor.hpp"
 
+// ** `examples` includes
+#include "editor.hpp"
+#include "examples/scenes/scene.hpp"
 
 // ** `raylib` Includes
 #include <raylib.h>
@@ -8,7 +10,7 @@
 
 // ** `Dear ImGui` Includes
 #include <imgui.h>
-#include <vector>
+
 
 
 // Scene List Window
@@ -34,38 +36,45 @@ void SceneListWindow::Update() {
 void SceneListWindow::Draw() {
 	if (!is_open) { return; }
 
-	auto engine_ref = parent->CallEngine();
-	std::vector<const char *> names = {};
+	ImGuiTreeNodeFlags leafNodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+	leafNodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-	if (engine_ref) { names = engine_ref->GetSceneNames(); }
-	const char** items = names.data();
-	// const char* items[] = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
+	ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	ImGui::Begin("Scene List");	
-	static int item_selected_idx = 0; // Here we store our selected data as an index.
+	int categoryIndex = 0;
+	const char* category = g_sceneEntries[categoryIndex].category;
+	int i = 0;	
 
-	if (ImGui::BeginListBox("listbox 1")) {
-		for (int n = 0; n < names.size(); n++) {
-		// for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-			const bool is_selected = (item_selected_idx == n);
-			if (ImGui::Selectable(items[n], is_selected))
-				item_selected_idx = n;
+	ImGui::Begin(title);
+	while (i < g_sceneCount) {
+		bool categorySelected = strcmp(category, g_sceneEntries[parent->GetSceneSelection()].category) == 0;
+		ImGuiTreeNodeFlags nodeSelectionFlags = categorySelected ? ImGuiTreeNodeFlags_Selected : 0;
+		bool nodeOpen = ImGui::TreeNodeEx(category, nodeFlags | nodeSelectionFlags);
 
-			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();
+		if (nodeOpen) {
+			while (i < g_sceneCount && strcmp(category, g_sceneEntries[i].category) == 0) {
+				ImGuiTreeNodeFlags selectionFlags = 0;
+				// if (s_settings.sampleIndex == i) {
+				// 	selectionFlags = ImGuiTreeNodeFlags_Selected;
+				// }
+				ImGui::TreeNodeEx((void*)(intptr_t)i, leafNodeFlags | selectionFlags, "%s", g_sceneEntries[i].name);
+				if (ImGui::IsItemClicked()) {
+					parent->SetSceneSelection(i);
+				}
+				++i;
+			}
+			ImGui::TreePop();
+		} else {
+			while (i < g_sceneCount && strcmp(category, g_sceneEntries[i].category) == 0) {
+				++i;
+			}
 		}
-	}
-    ImGui::EndListBox();
 
-	if (names.size() != 0 && ImGui::Button("Load")) {
-		printf("INFO: [editor] Attempted to load scene: %s\n", items[item_selected_idx]);
-		Scene_API* scene = nullptr;
-		if (engine_ref) { scene = engine_ref->GetScene(items[item_selected_idx]); };
-		if (scene != nullptr) {
-			parent->SetCurrentScene(scene);
+		if (i < g_sceneCount) {
+			category = g_sceneEntries[i].category;
+			categoryIndex = i;
 		}
-	}
+	}	
 	
 	ImGui::End();
 }

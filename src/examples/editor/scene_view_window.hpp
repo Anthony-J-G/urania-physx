@@ -14,6 +14,8 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	RenderTexture ViewTexture;
+	
 	Camera3D Camera = { 0 };
 	Texture2D GridTexture = { 0 };
 };

@@ -1,95 +1,39 @@
-// ** `raylib` Includes
-#include "raylib.h"
+// ** `examples` includes
+#include "examples/app.h"
 
-// ** imgui Includes
-#include "imgui.h"
-#include "imgui_impl_raylib.h"
+// ** `stdlib` includes
+#include <stdlib.h>
 
-// ** `runtime` Includes
-#include "editor/editor.hpp" // ImageViewerWindow, SceneViewWindow
 
-// ** stdlib Includes
-#include <math.h>
+#if defined(_WIN32)
+	#include <crtdbg.h>
 
-// ** `engine` Includes
-#include <engine/scene.hpp>
+	#ifndef WIN32_LEAN_AND_MEAN
+		#define WIN32_LEAN_AND_MEAN
+	#endif
+
+	#include <windows.h>
+#endif
 
 
 int main(int argc, char* argv[]) {
-	// Initialization
-	//--------------------------------------------------------------------------------------
-	int screenWidth  = 800;
-	int screenHeight = 600;	
+	
+#if defined(_WIN32)
+	// TODO(anthony-j-g): link against win ucrt to allow for memory-leak reporting
+	// Enable memory-leak reports
+	// _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG | _CRTDBG_MODE_FILE);
+	// _CrtSetReportFile(_CRT_WARN, _CRTDBG_FILE_STDERR);
+#endif
 
-	// ** Raylib/Raylib Window
-	// do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
-	// use the native resolution and scale your geometry.
-	int windowFlags = FLAG_MSAA_4X_HINT | FLAG_VSYNC_HINT | FLAG_WINDOW_MAXIMIZED | FLAG_WINDOW_RESIZABLE;
-	SetConfigFlags(windowFlags);
-	InitWindow(screenWidth, screenHeight, "raylib-Extras [ImGui] example - Editor Example");	
-	SetTargetFPS(144);
-	SetExitKey(KEY_NULL);
-	// Set Window Resolution to something Sensible
-	int currentMonitor = GetCurrentMonitor();
-	float aspectRatio = static_cast<float>(GetMonitorHeight(currentMonitor)) / GetMonitorWidth(currentMonitor);
-	screenWidth  = static_cast<int>(GetMonitorWidth(currentMonitor) * 0.90f);
-	screenHeight = static_cast<int>(screenWidth * aspectRatio);
-	SetWindowSize(screenWidth, screenHeight);
-	SetWindowPosition(
-		abs(screenWidth - GetMonitorWidth(currentMonitor)) / 2,
-		abs(screenHeight - GetMonitorHeight(currentMonitor)) / 2
-	);
-	// windowFlags ^= FLAG_WINDOW_HIDDEN;
-	// SetWindowState(windowFlags);
-
-	// ** Dear ImGui
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigWindowsMoveFromTitleBarOnly = true;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-
-	// ** Editor
-	Editor editor;
-	editor.Initialize();
+	Initialize();
 
 	// Main game loop
-	while (!WindowShouldClose() && !editor.ShouldQuit()) { // Detect window close button or ESC key
-		// Update Step
-        //----------------------------------------------------------------------------------
-		float deltatime = GetFrameTime();
-		editor.Update();
-		// current_scene.Update(deltatime);
-		//----------------------------------------------------------------------------------
-
-		// Render Step
-		//----------------------------------------------------------------------------------
-		BeginDrawing();
-		ClearBackground(DARKGRAY);
-
-		ImGui_ImplRaylib_NewFrame();
-		ImGui::NewFrame();
-		ImGui_ImplRaylib_ProcessEvents();
-		ImGui::DockSpaceOverViewport(ImGui::GetWindowDockID(), ImGui::GetMainViewport(), 0);
-
-		editor.Draw();
-		
-		ImGui::Render();
-    	ImGui_ImplRaylib_RenderDrawData(ImGui::GetDrawData());
-
-		EndDrawing();
-		//----------------------------------------------------------------------------------
+	while (!ShouldClose()) { // Detect window close button or ESC key		
+		Update();
+		Draw();
 	}
 
-	// De-Initialization
-	//--------------------------------------------------------------------------------------   
-	editor.Shutdown();
-	// current_scene.shutdown();
+	Destroy();
 
-	ImGui_ImplRaylib_Shutdown();
-	ImGui::DestroyContext();
-	CloseWindow();        // Close window and OpenGL context
-	//--------------------------------------------------------------------------------------
-
-	return 0;
+	return EXIT_SUCCESS;
 }
