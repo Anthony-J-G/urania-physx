@@ -59,6 +59,11 @@
             .url = "git+https://github.com/anthony-j-g/ccpputilz.git#351f44275da5285a4a7a16b09482c0e28aefac5e",
             .hash = "ccpputilz-0.1.0-p-OTsQ_fAABdAaaD9HuaL25YKpbyLulCu9B8JChjWGxM",
         },
+        .json = .{
+            .url = "git+https://github.com/nlohmann/json#d33ecd3f3bd11e30aa8bbabb00e0a9cd3f2456d8",
+            .hash = "N-V-__8AANbQ9AAvCsJ8qsc9c8cY_tpKWCdD6tFEGUuPkaJg",
+            .lazy = true,
+        },
     },
     .paths = .{
         "build.zig",

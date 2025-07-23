@@ -5,10 +5,10 @@
 
 #include "engine/types.h"
 
-struct Settings
-{
-	void Save();
-	void Load();
+struct Settings {
+
+	static void Save(const Settings& settings);
+	static void Load(Settings& settings);
 
 	int sampleIndex = 0;
 	int windowWidth = 1920;
@@ -35,3 +35,4 @@ struct Settings
 	bool singleStep = false;
 	bool restart = false;
 };
+extern Settings g_settings;

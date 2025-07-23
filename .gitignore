@@ -5,3 +5,5 @@ _build
 *venv*
 *_doxygen
 *.ini
+settings.json
+settings.ini

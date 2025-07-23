@@ -14,6 +14,7 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
     const rl_imgui = b.lazyDependency("rlimgui", .{}) orelse @panic("lazy dependecy error");
     const imgui = b.lazyDependency("imgui", .{})  orelse @panic("lazy dependecy error");
     const raylib = b.lazyDependency("raylib", .{.target = opts.target, .optimize = opts.optimize}) orelse @panic("lazy dependecy error");
+    const json = b.lazyDependency("json", .{}) orelse @panic("lazy dependecy error");
 
     // ** Create Module
     const module = b.createModule(.{
@@ -54,6 +55,7 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
     module.addIncludePath(rl_imgui.path(""));
     module.addIncludePath(imgui.path(""));
     module.addIncludePath(raylib.path("src"));
+    module.addIncludePath(json.path("include"));
 
     // Create Compile
     const exe = b.addExecutable(.{
@@ -63,6 +65,7 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
 
     switch (opts.target.result.os.tag) {
         .windows => {
+            // TODO(anthony-j-g): figure out how to use winucrt to track memory leaks
             // exe.linkSystemLibrary("ucrt");
         },
 
@@ -77,9 +80,13 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
 }
 
 
-const examples_files = &[_][]const u8{
+pub const examples_files = &[_][]const u8{
     "main.cpp",
-    "app.cpp",
+
+    // Runtime Source Files
+    "runtime/app.cpp",
+    "runtime/settings.cpp",
+    "runtime/render.cpp",
     
     // Editor Source Files
     "editor/editor.cpp",

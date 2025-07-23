@@ -1,4 +1,4 @@
-#include "app.h"
+#include "app.hpp"
 
 // ** `raylib` Includes
 #include <raylib.h>
@@ -12,7 +12,8 @@
 #include "imgui_impl_raylib.h"
 
 // ** 
-#include "editor/editor.hpp"
+#include "examples/editor/editor.hpp"
+#include "settings.hpp"
 
 
 // GLFWwindow* g_mainWindow = nullptr;
@@ -36,7 +37,10 @@ AppState Create() {
 
 // Initialization
 //--------------------------------------------------------------------------------------
-void Initialize() {    
+void Initialize() {
+
+	Settings::Save(g_settings);
+	Settings::Load(g_settings);
 
 	// ** Raylib/Raylib Window
 	// do not set the FLAG_WINDOW_HIGHDPI flag, that scales a low res framebuffer up to the native resolution.
