@@ -35,8 +35,8 @@ jobs:
         with:
           python-version: '3.13'
           cache: 'pip' # caching pip dependencies
+      - name: Install Python Dependencies
         run: pip install -r ./docs/requirements.txt
-
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
