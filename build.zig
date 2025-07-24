@@ -5,7 +5,7 @@ const ResolvedTarget = std.Build.ResolvedTarget;
 const OptimizeMode = std.builtin.OptimizeMode;
 
 // config imports
-// const engine    = @import("src/build-engine.zig");
+const engine    = @import("src/build-engine.zig");
 const examples  = @import("src/build-examples.zig");
 
 // ccpputilz imports
@@ -35,7 +35,11 @@ pub fn default_options(b: *std.Build) Options {
 pub fn build(b: *std.Build) void {
     const opts = default_options(b);
 
+    const engine_lib = engine.build(b, opts);
+    b.installArtifact(engine_lib);
+
     const examples_exe = examples.build(b, opts);
+    examples_exe.linkLibrary(engine_lib);
     b.installArtifact(examples_exe);
 
     compiledb.generateFromInstallStep(b);
