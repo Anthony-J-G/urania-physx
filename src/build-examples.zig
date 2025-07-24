@@ -81,6 +81,7 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
 
 
 pub const examples_files = &[_][]const u8{
+    // Root Source Files
     "main.cpp",
 
     // Runtime Source Files

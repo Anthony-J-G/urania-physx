@@ -136,11 +136,21 @@ bool ShouldClose() {
 // Update Step
 //----------------------------------------------------------------------------------
 void Update() {    
-    float deltatime = GetFrameTime();
+    float deltatime = GetFrameTime();	
 
+	// Tick Editor
 	if (g_editor) {
 		g_editor->Update();
-	}	
+	}
+
+	// Tick Simulations
+	int stepCount = 0;
+	for (int i = 0; i < s2_solverTypeCount; ++i) {
+		if (s_samples[i] != nullptr) {
+			s_samples[i]->Step(s_settings, solverColors[i]);
+			stepCount = s_samples[i]->m_stepCount;
+		}
+	}
 }
 //---------------------------------------------------------------------------------- end Update
 
