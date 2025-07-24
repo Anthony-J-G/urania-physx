@@ -28,6 +28,11 @@ pub fn build(b: *std.Build, opts: Options) *Compile {
 
     // ** Create Compile
     const lib = b.addLibrary(.{
+        .linkage = if (opts.shared)
+            .dynamic
+        else
+            .static
+        ,
         .name = "urania",
         .root_module = module,
     });
