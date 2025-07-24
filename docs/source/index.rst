@@ -7,8 +7,11 @@ Urania Physx
 =============
 *A physics engine written in C/C++*
 
-This repository contains multiple different implementations of various physics simulations. It currently uses `Raylib <https://github.com/raysan5/raylib>`_ as a backend to handle rendering,
-sound, input event handling, as well as some other platform speciifc functionality so the main focus of the repository is on the physics. For more information on the ``Raylib`` API, you can reference the `API cheatsheet <https://www.raylib.com/cheatsheet/cheatsheet.html>`_ or the `multitude of examples <https://www.raylib.com/examples.html>`_
+This repository provides an exploration of various physics and astrophysics simulations.
+
+The ``examples`` executable currently uses `Raylib <https://github.com/raysan5/raylib>`_ as a backend to handle rendering, sound, input event handling, as well as some other platform specifc functionality. This abstraction layer exists to allow for the main engine library to focus solely on the physics solvers. For more information on the ``raylib`` API, you can reference the `API cheatsheet <https://www.raylib.com/cheatsheet/cheatsheet.html>`_ or the `multitude of examples <https://www.raylib.com/examples.html>`_ hosted on ``raylib``'s official website.
+
+
 
 :math:`\sigma_{1}` equals :math:`\sigma_{2}`
 
@@ -27,10 +30,6 @@ sound, input event handling, as well as some other platform speciifc functionali
    U, \text{ otherwise }
    }
 
-
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
 
 
 .. toctree::
