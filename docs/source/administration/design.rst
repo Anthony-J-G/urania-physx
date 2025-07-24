@@ -6,7 +6,7 @@ This repository is a collection and exploration of various fluid simulation meth
 The project is subdivided into 5 different sections, the Runtime, the Editor, the Engine, the Simulations, and the Documentation.
 
 Runtime
-------
+-------
 *Executable*
 
 The runtime is the main executable that controls different aspects of the project. As it's name suggests, it is the default manager of the application's runtime. This includes opening the editor as necessary, hot reloading the simulations or engine, and managing the backend/platform. Currently the main backend utilizes a dependency on [raylib](https://www.raylib.com/).

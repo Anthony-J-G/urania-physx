@@ -6,5 +6,6 @@ Runtime
     :maxdepth: 1
     :hidden:
 
-    editor
+    app
+    render
 

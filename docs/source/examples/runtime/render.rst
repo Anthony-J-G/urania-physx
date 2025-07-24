@@ -1,0 +1,5 @@
+Rendering
+=========
+
+.. doxygenclass:: GfxContext
+    :members:

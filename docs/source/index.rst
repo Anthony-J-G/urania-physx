@@ -1,13 +1,32 @@
-.. project-commander documentation master file, created by
+.. urania-physx documentation master file, created by
    sphinx-quickstart on Sat Apr 26 01:09:45 2025.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Physics Simulations in C++
-==========================
+Urania Physx
+=============
+*A physics engine written in C/C++*
 
 This repository contains multiple different implementations of various physics simulations. It currently uses `Raylib <https://github.com/raysan5/raylib>`_ as a backend to handle rendering,
 sound, input event handling, as well as some other platform speciifc functionality so the main focus of the repository is on the physics. For more information on the ``Raylib`` API, you can reference the `API cheatsheet <https://www.raylib.com/cheatsheet/cheatsheet.html>`_ or the `multitude of examples <https://www.raylib.com/examples.html>`_
+
+:math:`\sigma_{1}` equals :math:`\sigma_{2}`
+
+.. math::
+   \langle \alpha, \beta \rangle
+   \in
+   \Biggl \lbrace
+   {
+   M,\text{ if }
+      {
+      l(\underline{x}) =
+         \frac { p(\underline{x}|M ) } { p(\underline{x}|U) }
+         \geq
+         \frac { p(U) }{ p(M) } }
+   \atop
+   U, \text{ otherwise }
+   }
+
 
 Add your content using ``reStructuredText`` syntax. See the
 `reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
@@ -15,12 +34,35 @@ documentation for details.
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Administration:
 
-   administration/index
-   runtime/index
-   editor/index
-   engine/index   
-   simulations/index
+   administration/overview
+   administration/style
+   administration/design   
+   administration/roadmap
+   administration/references
 
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Engine:
+   
+   engine/index
+   engine/types
+   engine/world
+
+
+.. toctree::
+   :hidden:
+   :maxdepth: 2
+   :caption: Examples:
+
+   examples/index
+   examples/modules
+   examples/runtime/index
+   examples/editor/index
+   examples/scenes/index
+   

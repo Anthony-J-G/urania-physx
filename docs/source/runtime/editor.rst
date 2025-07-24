@@ -1,5 +1,0 @@
-Editor
-======
-
-.. doxygenclass:: Editor
-    :members:

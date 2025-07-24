@@ -5,7 +5,7 @@
 #include "engine/types.h"
 
 
-// This class implements Box2D debug drawing callbacks
+//! This class implements Box2D debug drawing callbacks
 class GfxContext {
 public:
 	GfxContext();

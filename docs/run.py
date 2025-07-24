@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import shutil
 
-repo_name = "fluid-simulations"
+repo_name = "urania-physx"
 
 
 def main(env):
