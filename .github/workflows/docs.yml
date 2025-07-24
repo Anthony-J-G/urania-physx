@@ -22,7 +22,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
+  build:
+    environment:
+      name: install-python
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install -r requirements.txt
+
   deploy:
     environment:
       name: github-pages
