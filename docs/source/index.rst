@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Urania Physx
-=============
+Urania
+======
 *A physics engine written in C/C++*
 
 This repository provides an exploration of various physics and astrophysics simulations.
@@ -35,7 +35,7 @@ The ``examples`` executable currently uses `Raylib <https://github.com/raysan5/r
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Administration:
+   :caption: About
 
    administration/overview
    administration/style
@@ -47,7 +47,7 @@ The ``examples`` executable currently uses `Raylib <https://github.com/raysan5/r
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Engine:
+   :caption: Engine
    
    engine/index
    engine/types
@@ -57,7 +57,7 @@ The ``examples`` executable currently uses `Raylib <https://github.com/raysan5/r
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Examples:
+   :caption: Examples
 
    examples/index
    examples/modules
