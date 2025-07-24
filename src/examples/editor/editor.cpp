@@ -110,6 +110,11 @@ Editor::~Editor() {
 }
 
 
+bool Editor::ShouldQuit() {
+	return should_quit || WindowShouldClose();
+}
+
+
 void Editor::DrawMainMenuBar() {
 	static bool should_autosave = false;
 

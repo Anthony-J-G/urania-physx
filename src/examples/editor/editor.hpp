@@ -14,26 +14,68 @@ class EditorWindow;
 
 
 /*!
- *	Runtime specific class that is designed to be used for viewing scenes in an interactive development environment.
- */
+* 	@brief
+*	Informs the simulation about what the current running state should be via GUI interactions, as well as provide a platform
+*	in which to render the simulation.
+*/
 class Editor final {
 
 public:
 	Editor();
 	~Editor();
-	Editor(const Editor& other) = delete;
-	Editor& operator=(const Editor& other) = delete;
+	Editor(const Editor& other) = delete;				// Deleted Copy Constructor
+	Editor(const Editor&& other) = delete;	// Deleted Move Constructor
+	Editor& operator=(const Editor& other) = delete;	// Deleted Copy Assignment Constructor
 	
+	/*!
+	* 	@brief
+	*	Populates the @p editor_windows member array with casted pointers of the child classes and
+	*  	initializes Raylib ImGui implementation backend.
+	*/	
 	void Initialize();
+
+	/*!
+	* 	@brief
+	*	Deletes all of the elements of the @p editor_windows member array and frees the heap
+	*	allocated memory for the buffer.
+	*/	
 	void Shutdown();
 
+	/*!
+	* 	@brief
+	*	Iterates over all of the elements of the @p editor_windows member array and calls their
+	*	corresponding Update() function.
+	*/
 	void Update();
+
+	/*!
+	* 	@brief
+	*	Iterates over all of the elements of the @p editor_windows member array and calls their
+	*	corresponding Draw() function. Additionally shows the ImGui demo window if the option
+	*	selected and renders the menu bars to the screen.
+	*/
 	void Draw();
 
-	bool ShouldQuit() { return should_quit; }
+	/*!
+	* 	@brief
+	*	Populates the @p editor_windows member array with casted pointers of the child classes and
+	*  	initializes Raylib ImGui implementation backend.
+	*/
+	bool ShouldQuit();
 
-	int GetSceneSelection() { return scene_selection; }
-	void SetSceneSelection(int new_scene) {
+	/*!
+	* 	@brief
+	*	Populates the @p editor_windows member array with casted pointers of the child classes and
+	*  	initializes Raylib ImGui implementation backend.
+	*/
+	inline int GetSceneSelection() { return scene_selection; }
+
+	/*!
+	* 	@brief
+	*	Populates the @p editor_windows member array with casted pointers of the child classes and
+	*  	initializes Raylib ImGui implementation backend.
+	*/
+	inline void SetSceneSelection(int new_scene) {
 		if (g_sceneCount <= new_scene || new_scene < 0) {
 			return;
 		}
@@ -41,6 +83,11 @@ public:
 	}
 
 private:
+	/*!
+	* 	@brief
+	*	Populates the @p editor_windows member array with casted pointers of the child classes and
+	*  	initializes Raylib ImGui implementation backend.
+	*/
 	void DrawMainMenuBar();
 
 private:	
@@ -49,7 +96,7 @@ private:
 	bool show_imgui_demo 				= false;
 
 	EditorWindow** editor_windows 		= nullptr;
-	size_t window_count 				= 3;
+	size_t window_count 				= 0;
 };
 
 
@@ -78,4 +125,4 @@ protected:
 // Utility Functions
 
 float 	ScaleToDPI(float value);
-int 	ScaleToDPI(int value); 
+int 	ScaleToDPI(int value);
