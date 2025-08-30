@@ -12,6 +12,7 @@
 #include "imgui_impl_raylib.h"
 
 // ** 
+#include "examples/scenes/scene.hpp"
 #include "examples/editor/editor.hpp"
 #include "settings.hpp"
 
@@ -20,7 +21,7 @@
 static int s_screenWidth = 800;
 static int s_screenHeight = 600;
 static int s_selection = 0;
-// static Sample* s_samples[s2_solverTypeCount];
+static Scene* s_samples[ur_gravSolverTypeCount];
 // static Settings s_settings;
 static bool s_rightMouseDown = false;
 // static s2Vec2 s_clickPointWS = s2Vec2_zero;
@@ -145,12 +146,12 @@ void Update() {
 
 	// Tick Simulations
 	int stepCount = 0;
-	for (int i = 0; i < s2_solverTypeCount; ++i) {
-		if (s_samples[i] != nullptr) {
-			s_samples[i]->Step(s_settings, solverColors[i]);
-			stepCount = s_samples[i]->m_stepCount;
-		}
-	}
+	// for (int i = 0; i < s2_solverTypeCount; ++i) {
+	// 	if (s_samples[i] != nullptr) {
+	// 		s_samples[i]->Step(s_settings, solverColors[i]);
+	// 		stepCount = s_samples[i]->m_stepCount;
+	// 	}
+	// }
 }
 //---------------------------------------------------------------------------------- end Update
 

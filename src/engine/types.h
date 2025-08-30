@@ -3,16 +3,18 @@
 #include <stdint.h>
 
 
-const int s2_solverTypeCount = 7;
-
-typedef struct s2Vec2 {
+typedef struct urVec2 {
 	float x, y;
-} s2Vec2;
+} urVec2;
+
+typedef struct urVec3 {
+	float x, y;
+} urVec3;
 
 
-typedef struct s2Color {
+typedef struct urColor {
 	float r, g, b, a;
-} s2Color;
+} urColor;
 
 
 typedef enum s2BodyType {
@@ -54,3 +56,19 @@ typedef struct s2JointId
 
 
 static const s2BodyId s2_nullBodyId = {-1, -1, 0};
+
+
+/// Gravitational Physics
+/// ------------------------------
+/// Defines the rules and types that are used by physics bodies that interact with gravity
+
+typedef enum urGravSolverType
+{
+	ur_gravSolverNI,
+	ur_gravSolverTCM,
+	ur_gravSolverFMM,
+	ur_gravSolverPMM,
+	ur_gravSolverPMM_PMT,
+	ur_gravSolverGMFM,	
+	ur_gravSolverTypeCount,
+} s2SolverType;

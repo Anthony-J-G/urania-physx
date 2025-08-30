@@ -29,6 +29,7 @@ pub fn default_options(b: *std.Build) Options {
         .optimize = b.standardOptimizeOption(.{}),
         .engine = b.option(bool, "engine", "Only compile the engine binary") orelse false,
         .shared = b.option(bool, "shared", "Compile the engine binary as a shared object (dynamic library)") orelse false,
+        .tests = b.option(bool, "tests", "build unit test runner") orelse false,
         .examples = b.option(bool, "examples", "Only compile the examples executable") orelse false,
         .headers_only = b.option(bool, "headers-only", "Only install the engine's header files") orelse false,
     };
@@ -37,6 +38,8 @@ pub fn default_options(b: *std.Build) Options {
 
 pub fn build(b: *std.Build) void {
     const opts = default_options(b);
+
+    
     
     const install_engine = (
         opts.engine or (!opts.examples and !opts.engine)
@@ -51,7 +54,7 @@ pub fn build(b: *std.Build) void {
     
     const engine_lib = engine.build(b, opts);
     if (install_engine) {
-        b.installArtifact(engine_lib);    
+        b.installArtifact(engine_lib);
     }
     
     if (install_examples) {
