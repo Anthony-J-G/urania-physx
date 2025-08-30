@@ -1,7 +1,9 @@
 *zig-out*
 *cache*
 compile_commands.json
-_build
+*build/
 *venv*
 *_doxygen
 *.ini
+settings.json
+settings.ini
